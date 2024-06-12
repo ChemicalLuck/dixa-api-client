@@ -1,5 +1,6 @@
 import logging
 import time
+from typing import Generator
 from enum import Enum
 
 from requests import Request, Response
@@ -8,7 +9,6 @@ from requests.models import PreparedRequest
 from requests.sessions import Session
 
 from .exceptions import DixaAPIError, DixaHTTPError, DixaRequestException
-from .model import DixaAPIResponse
 
 
 class RequestMethod(Enum):
@@ -56,7 +56,7 @@ class DixaClient:
         temp_request.headers["Authorization"] = "REDACTED"
         return temp_request
 
-    def _retry(self, request: PreparedRequest) -> DixaAPIResponse:
+    def _retry(self, request: PreparedRequest) -> Response:
         """Retries a request."""
 
         if self._retries >= self._max_retries:
@@ -90,19 +90,7 @@ class DixaClient:
             )
             return response.text
 
-    def _extract_data(self, response: Response) -> DixaAPIResponse:
-        """Extracts data from a response."""
-
-        try:
-            data = response.json()
-            return data
-        except JSONDecodeError:
-            self._logger.error(
-                "Failed to decode JSON response", extra={"response": response.text}
-            )
-            return {"data": {}}
-
-    def _send(self, request: PreparedRequest) -> DixaAPIResponse:
+    def _send(self, request: PreparedRequest) -> Response:
         """Sends a request and handles retries and errors."""
 
         self._logger.debug(
@@ -126,9 +114,8 @@ class DixaClient:
             self._retries = 0
             response.raise_for_status()
 
-            data = self._extract_data(response)
-            self._logger.debug("Request successful", extra={"response": data})
-            return data
+            self._logger.debug("Request successful", extra={"response": response})
+            return response
 
         except HTTPError as http_error:
             self._logger.error("HTTP error", extra={"error": http_error})
@@ -145,7 +132,7 @@ class DixaClient:
         url: str,
         query: dict | None = None,
         json: dict | None = None,
-    ) -> DixaAPIResponse:
+    ) -> Response:
         """Creates and sends a request."""
 
         request = Request(method.value, url, params=query, json=json)
@@ -153,27 +140,27 @@ class DixaClient:
 
         return self._send(prepared_request)
 
-    def get(self, url: str, query: dict | None = None) -> DixaAPIResponse:
+    def get(self, url: str, query: dict | None = None) -> Response:
         """Sends a GET request."""
 
         return self._request(RequestMethod.GET, url, query=query)
 
-    def post(self, url: str, json: dict | None = None) -> DixaAPIResponse:
+    def post(self, url: str, json: dict | None = None) -> Response:
         """Sends a POST request."""
 
         return self._request(RequestMethod.POST, url, json=json)
 
-    def put(self, url: str, json: dict | None = None) -> DixaAPIResponse:
+    def put(self, url: str, json: dict | None = None) -> Response:
         """Sends a PUT request."""
 
         return self._request(RequestMethod.PUT, url, json=json)
 
-    def delete(self, url: str, json: dict | None = None) -> DixaAPIResponse:
+    def delete(self, url: str, json: dict | None = None) -> Response:
         """Sends a DELETE request."""
 
         return self._request(RequestMethod.DELETE, url, json=json)
 
-    def patch(self, url: str, json: dict | None = None) -> DixaAPIResponse:
+    def patch(self, url: str, json: dict | None = None) -> Response:
         """Sends a PATCH request."""
 
         return self._request(RequestMethod.PATCH, url, json=json)

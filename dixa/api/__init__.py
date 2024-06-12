@@ -1,4 +1,5 @@
 from typing import Literal
+
 from ..client import DixaClient
 
 DixaVersion = Literal["v1", "beta"]
@@ -17,7 +18,7 @@ class DixaResource:
         self.client = client
 
     @property
-    def url(self) -> str:
+    def _url(self) -> str:
         """Returns the resource URL."""
 
         return f"{self.base_url}/{self.dixa_version}/{self.resource}"

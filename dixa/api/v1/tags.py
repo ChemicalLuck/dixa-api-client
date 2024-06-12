@@ -13,28 +13,28 @@ class TagResource(DixaResource):
         """Activate a tag.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Tags/#tag/Tags/operation/patchTagsTagidActivate
         """
-        return self.client.patch(f"{self.url}/{tag_id}/activate")
+        return self.client.patch(f"{self._url}/{tag_id}/activate")
 
     def create(self, body):
         """Create a tag.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Tags/#tag/Tags/operation/postTags
         """
-        return self.client.post(self.url, body)
+        return self.client.post(self._url, body)
 
     def deactivate(self, tag_id: str):
         """Deactivate a tag.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Tags/#tag/Tags/operation/patchTagsTagidDeactivate
         """
-        return self.client.patch(f"{self.url}/{tag_id}/deactivate")
+        return self.client.patch(f"{self._url}/{tag_id}/deactivate")
 
     def get(self, tag_id: str):
         """Get a tag by id.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Tags/#tag/Tags/operation/getTagsTagid
         """
-        return self.client.get(f"{self.url}/{tag_id}")
+        return self.client.get(f"{self._url}/{tag_id}")
 
     def list(self):
         """List tags.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Tags/#tag/Tags/operation/getTags
         """
-        return self.client.get(self.url)
+        return self.client.get(self._url)

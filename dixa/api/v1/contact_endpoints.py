@@ -13,10 +13,10 @@ class ContactEndpointResource(DixaResource):
         """Get contact endpoint.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Contact-Endpoints/#tag/Contact-Endpoints/operation/getContact-endpointsContactendpointid
         """
-        return self.client.get(f"{self.url}/{contact_endpoint_id}")
+        return self.client.get(f"{self._url}/{contact_endpoint_id}")
 
     def list(self, query: dict | None = None):
         """List contact endpoints.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Contact-Endpoints/#tag/Contact-Endpoints/operation/getContact-endpoints
         """
-        return self.client.get(self.url, query=query)
+        return self.client.get(self._url, query=query)

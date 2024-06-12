@@ -13,4 +13,4 @@ class CustomAttributeResource(DixaResource):
         """List custom attributes definitions.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Custom-Attributes/#tag/Custom-Attributes/operation/getCustom-attributes
         """
-        return self.client.get(self.url)
+        return self.client.get(self._url)
