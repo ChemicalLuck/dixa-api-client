@@ -1,6 +1,5 @@
 import logging
 import time
-from typing import Generator
 from enum import Enum
 
 from requests import Request, Response
