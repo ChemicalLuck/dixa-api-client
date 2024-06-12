@@ -8,17 +8,17 @@
 ## Installation
 
 ```bash
-pip install dixa-api
+pip install dixa-api-client
 ```
 
 ## Usage
 
 ```python
-from dixa import DixaAPI
+from dixa import Dixa
 
-client = dixa(access_token='XXXXX')
+client = Dixa(api_key='XXXXX')
 
-agents = client.Agents.list()
+agents = client.v1.Agents.list()
 
 for agent in agents:
     print(agent['id'])
@@ -30,16 +30,11 @@ For more details on the content of the reponses, visit the [official dixa API do
 ### v1
 - Agents
 - Analytics
-- Anonymization
 - Contact Endpoints
 - Conversations
 - Custom Attributes
 - End Users
-- Internal Notes
-- Messages
 - Queues
-- Ratings
-- Search
 - Tags
 - Teams
 - Webhooks
