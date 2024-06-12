@@ -1,9 +1,9 @@
 # Dixa API Wrapper
 
-[![Python](https://img.shields.io/pypi/pyversions/dixa-api.svg)](https://badge.fury.io/py/recharge-api)
-[![PyPI](https://badge.fury.io/py/dixa-api.svg)](https://badge.fury.io/py/recharge-api)
-[![PyPI](https://github.com/ChemicalLuck/dixa-api/actions/workflows/python-publish.yml/badge.svg)](https://github.com/ChemicalLuck/recharge-api/actions/workflows/python-publish.yml)
-![PyPI - Downloads](https://img.shields.io/pypi/dm/dixa-api)
+[![Python](https://img.shields.io/pypi/pyversions/dixa-api-client.svg)](https://badge.fury.io/py/dixa-api-client)
+[![PyPI](https://badge.fury.io/py/dixa-api-client.svg)](https://badge.fury.io/py/dixa-api-client)
+[![PyPI](https://github.com/ChemicalLuck/dixa-api-client/actions/workflows/python-publish.yml/badge.svg)](https://github.com/ChemicalLuck/dixa-api-client/actions/workflows/python-publish.yml)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/dixa-api-client)
 
 ## Installation
 
