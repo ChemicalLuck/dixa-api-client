@@ -3,8 +3,8 @@ requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "dixa-api"
-version = "1.1.0"
+name = "dixa-api-client"
+version = "1.0.0"
 authors = [
 	{ name="ChemicalLuck", email="j.tebbett@outlook.com" }
 ]
