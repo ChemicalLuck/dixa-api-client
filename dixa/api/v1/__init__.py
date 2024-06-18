@@ -9,7 +9,6 @@ from .tags import TagResource
 from .teams import TeamResource
 from .webhooks import WebhookResource
 
-
 __all__ = [
     "AgentResource",
     "AnalyticsResource",
