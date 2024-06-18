@@ -139,7 +139,49 @@ class DixaClient:
 
         return self._send(prepared_request)
 
-    def get(self, url: str, query: dict | None = None) -> Response:
+    def _has_next_page(self, data: dict) -> bool:
+        """Checks if a response has a next page."""
+
+        return data.get("meta", {}).get("next") is not None
+
+    def paginate(self, url: str, query: Mapping[str, Any] | None = None) -> list:
+        pages = 0
+        data = []
+        while True:
+            pages += 1
+            self._logger.debug(
+                "Fetching page", extra={"page": pages, "url": url, "query": query}
+            )
+            response = self._request(RequestMethod.GET, url, query=query)
+            if not isinstance(response, Response):
+                return data
+
+            try:
+                response = response.json()
+            except JSONDecodeError:
+                self._logger.error(
+                    "Failed to decode JSON response, expect missing data",
+                    extra={"response": response.text},
+                )
+                break
+            data.extend(response.get("data", []))
+
+            url = response.get("meta", {}).get("next")
+            if url is None:
+                break
+
+        self._logger.debug(
+            "Fetched all pages", extra={"pages": pages, "records": len(data)}
+        )
+
+        return data
+
+    def get(
+        self,
+        url: str,
+        query: Mapping[str, Any] | None = None,
+        expected: Type[Union[dict, list]] = dict,
+    ) -> Union[dict, list]:
         """Sends a GET request."""
 
         return self._request(RequestMethod.GET, url, query=query)
