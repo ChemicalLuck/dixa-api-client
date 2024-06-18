@@ -1,7 +1,7 @@
-from .client import DixaClient
 import logging
 
 import dixa.api.v1 as v1
+from dixa.client import DixaClient
 
 
 class DixaV1:
