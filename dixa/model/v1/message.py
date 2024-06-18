@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypedDict
+from typing import Literal, Optional, Required, TypedDict
 
 type MessageAttributes = (
     CallRecordingAttributes
@@ -14,12 +14,12 @@ type MessageAttributes = (
 )
 
 
-class Message(TypedDict, total=False):
+class Message(TypedDict):
     """Message data."""
 
     id: str
     authorId: str
-    externalId: str
+    externalId: Optional[str]
     createdAt: str
     attributes: MessageAttributes
 
@@ -34,11 +34,11 @@ class Attachment(TypedDict):
 type Direction = Literal["Inbound", "Outbound"]
 
 
-class CallRecordingAttributes(TypedDict, total=False):
+class CallRecordingAttributes(TypedDict):
     """Call recording attributes."""
 
-    duration: int
-    recording: Required[str]
+    duration: Optional[int]
+    recording: str
     _type: Literal["CallRecordingAttributes"]
 
 
@@ -80,7 +80,7 @@ class ChatAttributes(TypedDict, total=False):
     content: Content
     direction: Direction
     isAutomated: Required[bool]
-    _type: Literal["ChatAttributes"]
+    _type: Required[Literal["ChatAttributes"]]
 
 
 ContactFormAttributes = TypedDict(
@@ -98,7 +98,7 @@ ContactFormAttributes = TypedDict(
         "originalContentUrl": File,
         "replyDefaultToEmails": list[EmailContact],
         "to": list[EmailContact],
-        "_type": Literal["ContactFormAttributes"],
+        "_type": Required[Literal["ContactFormAttributes"]],
     },
     total=False,
 )
@@ -118,7 +118,7 @@ EmailAttributes = TypedDict(
         "originalContentUrl": File,
         "replyDefaultToEmails": list[EmailContact],
         "to": list[EmailContact],
-        "_type": Literal["EmailAttributes"],
+        "_type": Required[Literal["EmailAttributes"]],
     },
     total=False,
 )
@@ -130,7 +130,7 @@ class FacebookMessengerAttributes(TypedDict, total=False):
     attachments: list[Attachment]
     content: Content
     direction: Direction
-    _type: Literal["FacebookMessengerAttributes"]
+    _type: Requied[Literal["FacebookMessengerAttributes"]]
 
 
 class GenericAttributes(TypedDict, total=False):
@@ -139,7 +139,7 @@ class GenericAttributes(TypedDict, total=False):
     attachments: list[Attachment]
     content: Content
     direction: Direction
-    _type: Literal["GenericAttributes"]
+    _type: Required[Literal["GenericAttributes"]]
 
 
 PhoneAttributes = TypedDict(
@@ -149,7 +149,7 @@ PhoneAttributes = TypedDict(
         "duration": int,
         "from": Required[str],
         "to": Required[str],
-        "_type": Literal["PhoneAttributes"],
+        "_type": Required[Literal["PhoneAttributes"]],
     },
     total=False,
 )
@@ -161,7 +161,7 @@ class SmsAttributes(TypedDict, total=False):
     attachments: list[Attachment]
     content: Content
     direction: Direction
-    _type: Literal["SmsAttributes"]
+    _type: Required[Literal["SmsAttributes"]]
 
 
 class TwitterAttributes(TypedDict, total=False):
@@ -170,7 +170,7 @@ class TwitterAttributes(TypedDict, total=False):
     attachments: list[Attachment]
     content: Content
     direction: Direction
-    _type: Literal["TwitterAttributes"]
+    _type: Required[Literal["TwitterAttributes"]]
 
 
 class WhatsAppAttributes(TypedDict, total=False):
@@ -179,4 +179,4 @@ class WhatsAppAttributes(TypedDict, total=False):
     attachments: list[Attachment]
     content: Content
     direction: Direction
-    _type: Literal["WhatsAppAttributes"]
+    _type: Required[Literal["WhatsAppAttributes"]]
