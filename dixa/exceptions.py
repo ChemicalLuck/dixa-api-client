@@ -1,4 +1,4 @@
-from requests.exceptions import RequestException, HTTPError
+from requests.exceptions import HTTPError, RequestException
 
 
 class DixaRequestException(RequestException):
