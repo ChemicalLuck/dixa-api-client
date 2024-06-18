@@ -1,6 +1,7 @@
 import logging
 import time
 from enum import Enum
+from typing import Any, Mapping, Type, Union
 
 from requests import Request, Response
 from requests.exceptions import HTTPError, JSONDecodeError, RequestException
@@ -125,12 +126,31 @@ class DixaClient:
             self._logger.error("Request failed", extra={"error": request_error})
             raise DixaRequestException("Request failed") from request_error
 
+    def _extract_data(
+        self, response: Response, expected: Type[Union[dict, list]]
+    ) -> Union[dict, list]:
+        try:
+            data = response.json().get("data", {})
+        except JSONDecodeError:
+            self._logger.error(
+                "Failed to decode JSON response, expect missing data",
+                extra={"response": response.text},
+            )
+            return expected()
+
+        if not isinstance(data, expected):
+            raise DixaAPIError(
+                f"Expected {expected.__name__}, got {type(data).__name__}"
+            )
+
+        return data
+
     def _request(
         self,
         method: RequestMethod,
         url: str,
-        query: dict | None = None,
-        json: dict | None = None,
+        query: Mapping[str, Any] | None = None,
+        json: Mapping[str, Any] | None = None,
     ) -> Response:
         """Creates and sends a request."""
 
@@ -184,24 +204,49 @@ class DixaClient:
     ) -> Union[dict, list]:
         """Sends a GET request."""
 
-        return self._request(RequestMethod.GET, url, query=query)
+        response = self._request(RequestMethod.GET, url, query=query)
+        return self._extract_data(response, expected)
 
-    def post(self, url: str, json: dict | None = None) -> Response:
+    def post(
+        self,
+        url: str,
+        json: Mapping[str, Any] | None = None,
+        expected: Type[Union[dict, list]] = dict,
+    ) -> Union[dict, list]:
         """Sends a POST request."""
 
-        return self._request(RequestMethod.POST, url, json=json)
+        response = self._request(RequestMethod.POST, url, json=json)
+        return self._extract_data(response, expected)
 
-    def put(self, url: str, json: dict | None = None) -> Response:
+    def put(
+        self,
+        url: str,
+        json: Mapping[str, Any] | None = None,
+        expected: Type[Union[dict, list]] = dict,
+    ) -> Union[dict, list]:
         """Sends a PUT request."""
 
-        return self._request(RequestMethod.PUT, url, json=json)
+        response = self._request(RequestMethod.PUT, url, json=json)
+        return self._extract_data(response, expected)
 
-    def delete(self, url: str, json: dict | None = None) -> Response:
+    def delete(
+        self,
+        url: str,
+        json: Mapping[str, Any] | None = None,
+        expected: Type[Union[dict, list]] = dict,
+    ) -> Union[dict, list]:
         """Sends a DELETE request."""
 
-        return self._request(RequestMethod.DELETE, url, json=json)
+        response = self._request(RequestMethod.DELETE, url, json=json)
+        return self._extract_data(response, expected)
 
-    def patch(self, url: str, json: dict | None = None) -> Response:
+    def patch(
+        self,
+        url: str,
+        json: Mapping[str, Any] | None = None,
+        expected: Type[Union[dict, list]] = dict,
+    ) -> Union[dict, list]:
         """Sends a PATCH request."""
 
-        return self._request(RequestMethod.PATCH, url, json=json)
+        response = self._request(RequestMethod.PATCH, url, json=json)
+        return self._extract_data(response, expected)
