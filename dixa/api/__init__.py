@@ -1,6 +1,6 @@
 from typing import Literal
 
-from ..client import DixaClient
+from dixa.client import DixaClient
 
 DixaVersion = Literal["v1", "beta"]
 
