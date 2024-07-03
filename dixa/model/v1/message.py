@@ -130,7 +130,7 @@ class FacebookMessengerAttributes(TypedDict, total=False):
     attachments: list[Attachment]
     content: Content
     direction: Direction
-    _type: Requied[Literal["FacebookMessengerAttributes"]]
+    _type: Required[Literal["FacebookMessengerAttributes"]]
 
 
 class GenericAttributes(TypedDict, total=False):

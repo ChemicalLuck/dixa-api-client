@@ -1,6 +1,10 @@
 from typing import Literal, Required, TypedDict
 
-from .queue import Queue
+
+class Queue(TypedDict, total=False):
+    id: Required[str]
+    queuedAt: str
+
 
 type Channel = Literal[
     "WhatsApp",
