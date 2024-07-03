@@ -118,12 +118,24 @@ class DixaClient:
             return response
 
         except HTTPError as http_error:
-            self._logger.error("HTTP error", extra={"error": http_error})
+            self._logger.error(
+                "HTTP error",
+                extra={
+                    "error": http_error.response.text,
+                    "request": http_error.request,
+                },
+            )
             raise DixaHTTPError(
                 self._extract_error_message(http_error.response)
             ) from http_error
         except RequestException as request_error:
-            self._logger.error("Request failed", extra={"error": request_error})
+            self._logger.error(
+                "Request failed",
+                extra={
+                    "error": "An ambiguous error occured",
+                    "request": request_error.request,
+                },
+            )
             raise DixaRequestException("Request failed") from request_error
 
     def _extract_data(

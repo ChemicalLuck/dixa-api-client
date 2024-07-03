@@ -336,7 +336,7 @@ class ConversationResource(DixaResource):
         """Tag a conversation.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/putConversationsConversationidTagsTagid
         """
-        return self.client.post(f"{self._url}/{conversation_id}/tags/{tag_id}")
+        return self.client.put(f"{self._url}/{conversation_id}/tags/{tag_id}")
 
     def untag(self, conversation_id: str, tag_id: str):
         """Untag a conversation.
