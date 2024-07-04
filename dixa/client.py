@@ -101,13 +101,17 @@ class DixaClient:
 
             if response.status_code == 429:
                 self._logger.warning(
-                    "Rate limited, retrying...", extra={"response": response}
+                    "Rate limited, retrying...", extra={"response": response.text}
                 )
                 return self._retry(request)
 
             if response.status_code >= 500:
                 self._logger.error(
-                    "Server error, retrying...", extra={"response": response}
+                    "Server error, retrying...",
+                    extra={
+                        "response": response.text,
+                        "status_code": response.status_code,
+                    },
                 )
                 return self._retry(request)
 
