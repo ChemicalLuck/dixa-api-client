@@ -58,10 +58,18 @@ class DixaClient:
 
     def _retry(self, request: PreparedRequest) -> Response:
         """Retries a request."""
-
+        redacted_request = self._redact_auth(request)
         if self._retries >= self._max_retries:
+
             self._logger.error(
-                "Max retries reached", extra={"request": self._redact_auth(request)}
+                "Max retries reached",
+                extra={
+                    "retries": self._retries,
+                    "max_retries": self._max_retries,
+                    "url": redacted_request.url,
+                    "body": redacted_request.body,
+                    "headers": redacted_request.headers
+                }
             )
             raise DixaAPIError("Max retries reached")
 
@@ -72,7 +80,9 @@ class DixaClient:
                 "retries": self._retries,
                 "max_retries": self._max_retries,
                 "delay": self._retry_delay,
-                "request": self._redact_auth(request),
+                "url": redacted_request.url,
+                "body": redacted_request.body,
+                "headers": redacted_request.headers,
             },
         )
         time.sleep(self._retry_delay)
@@ -94,7 +104,7 @@ class DixaClient:
         """Sends a request and handles retries and errors."""
 
         self._logger.debug(
-            "Sending request", extra={"request": self._redact_auth(request)}
+            "Sending request", extra={"url": self._redact_auth(request).url}
         )
         try:
             response = self._session.send(request)
@@ -118,7 +128,7 @@ class DixaClient:
             self._retries = 0
             response.raise_for_status()
 
-            self._logger.debug("Request successful", extra={"response": response})
+            self._logger.debug("Request successful", extra={"response": response.text})
             return response
 
         except HTTPError as http_error:
