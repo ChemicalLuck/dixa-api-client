@@ -298,6 +298,7 @@ type Conversation = (
 )
 
 ConversationTypes = [
+    AnonymizedConversation,
     ChatConversation,
     ContactFormConversation,
     EmailConversation,
