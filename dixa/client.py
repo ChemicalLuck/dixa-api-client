@@ -60,7 +60,6 @@ class DixaClient:
         """Retries a request."""
         redacted_request = self._redact_auth(request)
         if self._retries >= self._max_retries:
-
             self._logger.error(
                 "Max retries reached",
                 extra={
@@ -68,7 +67,7 @@ class DixaClient:
                     "max_retries": self._max_retries,
                     "url": redacted_request.url,
                     "body": redacted_request.body,
-                    "headers": redacted_request.headers
+                    "headers": dict(redacted_request.headers)
                 }
             )
             raise DixaAPIError("Max retries reached")
@@ -82,7 +81,7 @@ class DixaClient:
                 "delay": self._retry_delay,
                 "url": redacted_request.url,
                 "body": redacted_request.body,
-                "headers": redacted_request.headers,
+                "headers": dict(redacted_request.headers),
             },
         )
         time.sleep(self._retry_delay)
