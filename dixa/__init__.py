@@ -1,6 +1,8 @@
 import logging
 from typing import Optional
 
+from requests import Session
+
 import dixa.api.v1 as v1
 from dixa.client import DixaClient
 
@@ -30,11 +32,15 @@ class Dixa:
         api_secret: Optional[str] = None,
         max_retries: int = 3,
         retry_delay: int = 2,
+        session: Optional[Session] = None,
         logger: Optional[logging.Logger] = None,
+        logger_level: int = logging.DEBUG,
     ):
         """Initializes the Dixa API client."""
 
-        self.client = DixaClient(api_key, api_secret, max_retries, retry_delay, logger)
+        self.client = DixaClient(
+            api_key, api_secret, max_retries, retry_delay, session, logger, logger_level
+        )
 
         self.v1 = DixaV1(self.client)
 
