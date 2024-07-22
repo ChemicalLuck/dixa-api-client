@@ -1,4 +1,5 @@
 import logging
+from typing import Optional
 
 import dixa.api.v1 as v1
 from dixa.client import DixaClient
@@ -26,10 +27,10 @@ class Dixa:
     def __init__(
         self,
         api_key: str,
-        api_secret: str | None = None,
+        api_secret: Optional[str] = None,
         max_retries: int = 3,
-        retry_delay: int = 10,
-        logger: logging.Logger | None = None,
+        retry_delay: int = 2,
+        logger: Optional[logging.Logger] = None,
     ):
         """Initializes the Dixa API client."""
 

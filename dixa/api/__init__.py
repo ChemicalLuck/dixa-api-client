@@ -13,12 +13,8 @@ class DixaResource:
     dixa_version: DixaVersion = "v1"
 
     def __init__(self, client: DixaClient):
-        """Initializes the Dixa API resource."""
-
         self.client = client
 
     @property
     def _url(self) -> str:
-        """Returns the resource URL."""
-
         return f"{self.base_url}/{self.dixa_version}/{self.resource}"
