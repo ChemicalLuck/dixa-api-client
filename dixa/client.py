@@ -1,9 +1,9 @@
+import json
 import logging
+import random
 import time
 from enum import Enum
 from typing import Any, Mapping, Optional, Type, Union
-import json
-import random
 
 from requests import Request, Response
 from requests.exceptions import HTTPError, JSONDecodeError, RequestException
@@ -13,6 +13,7 @@ from requests.sessions import Session
 from .exceptions import DixaAPIError, DixaHTTPError, DixaRequestException
 
 REDACTED_HEADERS = ["Authorization"]
+
 
 class DixaCustomFormatter(logging.Formatter):
     standard_attributes = {
@@ -54,6 +55,7 @@ class DixaCustomFormatter(logging.Formatter):
         else:
             return base_message
 
+
 class RequestMethod(Enum):
     GET = "GET"
     POST = "POST"
@@ -88,7 +90,9 @@ class DixaClient:
             }
         )
 
-    def _create_default_logger(self, logging_level: int = logging.DEBUG) -> logging.Logger:
+    def _create_default_logger(
+        self, logging_level: int = logging.DEBUG
+    ) -> logging.Logger:
         logger = logging.getLogger(__name__)
         handler = logging.StreamHandler()
         formatter = DixaCustomFormatter(
@@ -116,8 +120,8 @@ class DixaClient:
                     "max_retries": self._max_retries,
                     "url": redacted_request.url,
                     "body": redacted_request.body,
-                    "headers": dict(redacted_request.headers)
-                }
+                    "headers": dict(redacted_request.headers),
+                },
             )
             self._reset_retry_logic()
             raise DixaAPIError("Max retries reached")
@@ -162,8 +166,8 @@ class DixaClient:
             extra={
                 "url": redacted_request.url,
                 "body": redacted_request.body,
-                "headers": dict(redacted_request.headers)
-            }
+                "headers": dict(redacted_request.headers),
+            },
         )
         try:
             response = self._session.send(request)
