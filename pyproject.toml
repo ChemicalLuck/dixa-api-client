@@ -21,10 +21,10 @@ classifiers = [
 	"Topic :: Software Development :: Testing",
 	"Topic :: Utilities"
 ]
-dynamic = ["dependencies"]
+dependencies = ["requests"]
 
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}
+[project.optional-dependencies]
+dev = ["ruff", "pre-commit", "python-dotenv"]
 
 [project.urls]
 Homepage = "http://github.com/ChemicalLuck/dixa-api"
