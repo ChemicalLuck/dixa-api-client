@@ -119,7 +119,6 @@ class DixaClient:
                     "retries": self._retries,
                     "max_retries": self._max_retries,
                     "url": redacted_request.url,
-                    "body": redacted_request.body,
                     "headers": dict(redacted_request.headers),
                 },
             )
@@ -133,7 +132,6 @@ class DixaClient:
                 "max_retries": self._max_retries,
                 "delay": self._retry_delay,
                 "url": redacted_request.url,
-                "body": redacted_request.body,
                 "headers": dict(redacted_request.headers),
             },
         )
