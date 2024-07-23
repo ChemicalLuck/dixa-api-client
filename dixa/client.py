@@ -163,7 +163,6 @@ class DixaClient:
             "Sending request",
             extra={
                 "url": redacted_request.url,
-                "body": redacted_request.body,
                 "headers": dict(redacted_request.headers),
             },
         )
