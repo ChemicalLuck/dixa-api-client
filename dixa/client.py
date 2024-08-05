@@ -189,7 +189,6 @@ class DixaClient:
                 "HTTP error",
                 extra={
                     "error": http_error.response.text,
-                    "request": http_error.request,
                 },
             )
             raise DixaHTTPError(
@@ -200,7 +199,6 @@ class DixaClient:
                 "Request failed",
                 extra={
                     "error": "An ambiguous error occured",
-                    "request": request_error.request,
                 },
             )
             raise DixaRequestException("Request failed") from request_error
