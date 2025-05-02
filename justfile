@@ -10,6 +10,8 @@ install:
 	uv pip install -e .
 develop:
 	uv pip install -e .[dev] && pre-commit install
+compat:
+	vermin -t=3.8- -vvv --violations --feature union-types --backport enum --backport typing --eval-annotations --no-tips dixa
 uninstall:
 	uv pip uninstall dixa-api-client
 clean:
