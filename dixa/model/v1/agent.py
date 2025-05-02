@@ -1,47 +1,57 @@
-from typing import Literal, Required, TypedDict
+from typing import List, Literal, TypedDict, Union
 
 from .bulk_action import BulkActionFailure
 
 
-class Agent(TypedDict, total=False):
-    """Agent"""
+class _AgentRequired(TypedDict):
+    createdAt: str
+    displayName: str
+    email: str
+    id: str
 
-    additionalEmails: list[str]
-    additionalPhoneNumbers: list[str]
+
+class _AgentOptional(TypedDict, total=False):
+    additionalEmails: List[str]
+    additionalPhoneNumbers: List[str]
     avatarUrl: str
-    createdAt: Required[str]
-    displayName: Required[str]
-    email: Required[str]
     firstName: str
-    id: Required[str]
     lastName: str
-    middleNames: list[str]
+    middleNames: List[str]
     phoneNumber: str
-    roles: list[str]
+    roles: List[str]
 
 
-type ConnectionStatus = Literal["Online", "Offline"]
+class Agent(_AgentRequired, _AgentOptional):
+    pass
 
-type PresenceStatus = Literal["Away", "Working"]
+
+ConnectionStatus = Literal["Online", "Offline"]
+
+PresenceStatus = Literal["Away", "Working"]
 
 
-class AgentPresence(TypedDict, total=False):
-    """AgentPresence"""
+class _AgentPresenceRequired(TypedDict):
+    connectionStatus: ConnectionStatus
+    requestTime: str
+    userId: str
 
-    activeChannels: list[str]
-    connectionStatus: Required[ConnectionStatus]
+
+class _AgentPresenceOptional(TypedDict, total=False):
+    activeChannels: List[str]
     lastSeen: str
     presenceStatus: PresenceStatus
-    requestTime: Required[str]
-    userId: Required[str]
 
 
-type AgentBulkActionOutcome = AgentBulkActionSuccess | BulkActionFailure
+class AgentPresence(_AgentPresenceRequired, _AgentPresenceOptional):
+    pass
 
 
 class AgentBulkActionSuccess(TypedDict):
-    data: list[Agent]
+    data: List[Agent]
     _type: Literal["BulkActionSuccess"]
+
+
+AgentBulkActionOutcome = Union[AgentBulkActionSuccess, BulkActionFailure]
 
 
 AgentBulkActionOutcomes = [AgentBulkActionSuccess, BulkActionFailure]

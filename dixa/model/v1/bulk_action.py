@@ -1,4 +1,4 @@
-from typing import Literal, Optional, TypedDict
+from typing import Literal, Optional, TypedDict, Union
 
 
 class EmptyPatchSet(TypedDict):
@@ -36,9 +36,9 @@ class Validation(TypedDict):
     _type: Literal["Validation"]
 
 
-type BulkActionFailureError = (
-    EmptyPatchSet | ErrorResponse | Infrastructure | Integrity | NotFound | Validation
-)
+BulkActionFailureError = Union[
+    EmptyPatchSet, ErrorResponse, Infrastructure, Integrity, NotFound, Validation
+]
 
 
 class BulkActionFailure(TypedDict):

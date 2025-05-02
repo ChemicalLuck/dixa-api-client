@@ -1,18 +1,32 @@
-from typing import Required, TypedDict
+from typing import List, TypedDict, Union
 
 
-class EmailEndpoint(TypedDict, total=False):
-    address: Required[str]
+class _EmailEndpointRequired(TypedDict):
+    address: str
+
+
+class _EmailEndpointOptional(TypedDict, total=False):
     name: str
     senderOverride: str
 
 
-class TelephonyEndpoint(TypedDict, total=False):
-    functionality: list[str]
+class EmailEndpoint(_EmailEndpointRequired, _EmailEndpointOptional):
+    pass
+
+
+class _TelephonyEndpointRequired(TypedDict):
+    number: str
+
+
+class _TelephonyEndpointOptional(TypedDict, total=False):
+    functionality: List[str]
     name: str
-    number: Required[str]
 
 
-type ContactEndpoint = EmailEndpoint | TelephonyEndpoint
+class TelephonyEndpoint(_TelephonyEndpointRequired, _TelephonyEndpointOptional):
+    pass
+
+
+ContactEndpoint = Union[EmailEndpoint, TelephonyEndpoint]
 
 ContactEndpoints = [EmailEndpoint, TelephonyEndpoint]

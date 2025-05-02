@@ -1,17 +1,24 @@
-from typing import Literal, Required, TypedDict
+from typing import Dict, List, Literal, TypedDict, Union
 
 from .bulk_action import BulkActionFailure
 from .conversation import Channel
 
 
-class Queue(TypedDict, total=False):
-    id: Required[str]
+class _QueueRequired(TypedDict):
+    id: str
+
+
+class _QueueOptional(TypedDict, total=False):
     queuedAt: str
 
 
-type MemberListType = Literal["Default", "SkillBased"]
+class Queue(_QueueRequired, _QueueOptional):
+    pass
 
-type OfferingAlgorithm = Literal[
+
+MemberListType = Literal["Default", "SkillBased"]
+
+OfferingAlgorithm = Literal[
     "AgentPriorityOneAtATimeRandom",
     "AllAtOnce",
     "AgentPriorityLongestIdle",
@@ -20,7 +27,7 @@ type OfferingAlgorithm = Literal[
     "OneAtATimeRandom",
 ]
 
-type QueueThreshold = Literal[
+QueueThreshold = Literal[
     "SlaTimeLimit",
     "AvailableAgents",
     "LongestWait",
@@ -28,34 +35,41 @@ type QueueThreshold = Literal[
     "WaitingConversations",
 ]
 
-type SLACalculationMethod = Literal["AbandonedIgnored"]
+SLACalculationMethod = Literal["AbandonedIgnored"]
 
 
 class QueueUsages(TypedDict):
     queueId: str
-    usages: dict[Channel, list[str]]
+    usages: Dict[Channel, List[str]]
 
 
-class Queue1(TypedDict, total=False):
-    doNotOfferTimeouts: Required[dict[Channel, int]]
-    id: Required[str]
-    isDefault: Required[bool]
-    isDoNotOfferEnabled: Required[bool]
+class _Queue1Required(TypedDict):
+    doNotOfferTimeouts: Dict[Channel, int]
+    id: str
+    isDefault: bool
+    isDoNotOfferEnabled: bool
+    name: str
+    organizationId: str
+
+
+class _Queue1Optional(TypedDict, total=False):
     isPreferredAgentEnabled: bool
     memberListType: MemberListType
-    name: Required[str]
     offerAbandonedConversations: bool
     offeringAlgorithm: OfferingAlgorithm
     offerTimeout: int
-    organizationId: Required[str]
     personalAgentOfflineTimeout: int
     preferredAgentOfflineTimeout: int
-    preferredAgentTimeouts: dict[Channel, int]
+    preferredAgentTimeouts: Dict[Channel, int]
     priority: int
-    queueThresholds: dict[QueueThreshold, int]
+    queueThresholds: Dict[QueueThreshold, int]
     slaCalculationMethod: SLACalculationMethod
     usages: QueueUsages
     wrapupTimeout: int
+
+
+class Queue1(_Queue1Required, _Queue1Optional):
+    pass
 
 
 class AssignAgentBulkActionSuccess(TypedDict):
@@ -63,11 +77,18 @@ class AssignAgentBulkActionSuccess(TypedDict):
     _type: Literal["BulkActionSuccess"]
 
 
-type AssignAgentOutcome = BulkActionFailure | AssignAgentBulkActionSuccess
+AssignAgentOutcome = Union[BulkActionFailure, AssignAgentBulkActionSuccess]
 
 AssignAgentOutcomes = [BulkActionFailure, AssignAgentBulkActionSuccess]
 
 
-class QueueMember(TypedDict, total=False):
-    agentId: Required[str]
+class _QueueMemberRequired(TypedDict):
+    agentId: str
+
+
+class _QueueMemberOptional(TypedDict, total=False):
     priority: int
+
+
+class QueueMember(_QueueMemberRequired, _QueueMemberOptional):
+    pass

@@ -1,9 +1,16 @@
-from typing import Literal, Required, TypedDict
+from typing import List, Literal, TypedDict, Union
 
 
-class Filter(TypedDict, total=False):
-    attribute: Required[str]
-    values: list[str]
+class _FilterRequired(TypedDict):
+    attribute: str
+
+
+class _FilterOptional(TypedDict, total=False):
+    values: List[str]
+
+
+class Filter(_FilterRequired, _FilterOptional):
+    pass
 
 
 class Interval(TypedDict):
@@ -25,16 +32,23 @@ class Preset(TypedDict):
     ]
 
 
-class FilterValue(TypedDict, total=False):
+class _FilterValueRequired(TypedDict):
+    value: str
+
+
+class _FilterValueOptional(TypedDict, total=False):
     label: str
-    value: Required[str]
 
 
-type Measure = Literal["Min", "Max", "Sum", "Percentage", "StdDev", "Average", "Count"]
+class FilterValue(_FilterValueRequired, _FilterValueOptional):
+    pass
 
-type DoubleMeasure = Literal["Min", "Max", "Sum", "Percentage", "StdDev", "Average"]
 
-type LongMeasure = Literal["Count"]
+Measure = Literal["Min", "Max", "Sum", "Percentage", "StdDev", "Average", "Count"]
+
+DoubleMeasure = Literal["Min", "Max", "Sum", "Percentage", "StdDev", "Average"]
+
+LongMeasure = Literal["Count"]
 
 
 class LongAggregateValue(TypedDict, total=False):
@@ -47,9 +61,16 @@ class DoubleAggregateValue(TypedDict, total=False):
     value: float
 
 
-class MetricData(TypedDict, total=False):
-    aggregates: Required[list[DoubleAggregateValue | LongAggregateValue]]
+class _MetricDataRequired(TypedDict):
+    aggregates: List[Union[DoubleAggregateValue, LongAggregateValue]]
+
+
+class _MetricDataOptional(TypedDict, total=False):
     id: str
+
+
+class MetricData(_MetricDataRequired, _MetricDataOptional):
+    pass
 
 
 class BooleanField(TypedDict):
@@ -85,58 +106,88 @@ class UUIDField(TypedDict):
 
 
 class ListField(TypedDict):
-    value: list[
-        BooleanField
-        | DoubleField
-        | InstantField
-        | IntField
-        | LongField
-        | StringField
-        | TimestampField
-        | UUIDField
+    value: List[
+        Union[
+            BooleanField,
+            DoubleField,
+            InstantField,
+            IntField,
+            LongField,
+            StringField,
+            TimestampField,
+            UUIDField,
+        ]
     ]
 
 
-type MetricRecordValue = (
-    BooleanField
-    | DoubleField
-    | InstantField
-    | IntField
-    | ListField
-    | LongField
-    | StringField
-    | TimestampField
-    | UUIDField
-)
+MetricRecordValue = Union[
+    BooleanField,
+    DoubleField,
+    InstantField,
+    IntField,
+    ListField,
+    LongField,
+    StringField,
+    TimestampField,
+    UUIDField,
+]
 
 
-class Field(TypedDict, total=False):
+class _FieldRequired(TypedDict):
+    name: str
+
+
+class _FieldOptional(TypedDict, total=False):
     field: MetricRecordValue
-    name: Required[str]
+
+
+class Field(_FieldRequired, _FieldOptional):
+    pass
 
 
 class MetricRecord(TypedDict, total=False):
-    fields: list[Field]
+    fields: List[Field]
     primaryTimestampField: TimestampField
     value: MetricRecordValue
 
 
-class AggregateMetadata(TypedDict, total=False):
+class _AggregateMetadataRequired(TypedDict):
+    measure: Measure
+
+
+class _AggregateMetadataOptional(TypedDict, total=False):
     description: str
-    measure: Required[Measure]
 
 
-class FilterMetadata(TypedDict, total=False):
+class AggregateMetadata(_AggregateMetadataRequired, _AggregateMetadataOptional):
+    pass
+
+
+class _FilterMetadataRequired(TypedDict):
+    filterAttribute: str
+
+
+class _FilterMetadataOptional(TypedDict, total=False):
     description: str
-    filterAttribute: Required[str]
 
 
-class MetricMetadata(TypedDict, total=False):
-    aggregations: list[AggregateMetadata]
+class FilterMetadata(_FilterMetadataRequired, _FilterMetadataOptional):
+    pass
+
+
+class _MetricMetadataRequired(TypedDict):
+    id: str
+
+
+class _MetricMetadataOptional(TypedDict, total=False):
+    aggregations: List[AggregateMetadata]
     description: str
-    filters: list[FilterMetadata]
-    id: Required[str]
-    relatedREcordIds: list[str]
+    filters: List[FilterMetadata]
+    relatedREcordIds: List[str]
+
+
+class MetricMetadata(_MetricMetadataRequired, _MetricMetadataOptional):
+    pass
 
 
 class FieldMetadata(TypedDict):
@@ -145,9 +196,18 @@ class FieldMetadata(TypedDict):
     nullable: bool
 
 
-class MetricRecordMetadata(TypedDict, total=False):
-    description: Required[str]
-    fieldsMetadata: list[FieldMetadata]
-    filters: list[FilterMetadata]
-    id: Required[str]
-    relatedMetricIds: list[str]
+class _MetricRecordMetadataRequired(TypedDict):
+    description: str
+    id: str
+
+
+class _MetricRecordMetadataOptional(TypedDict, total=False):
+    fieldsMetadata: List[FieldMetadata]
+    filters: List[FilterMetadata]
+    relatedMetricIds: List[str]
+
+
+class MetricRecordMetadata(
+    _MetricRecordMetadataRequired, _MetricRecordMetadataOptional
+):
+    pass

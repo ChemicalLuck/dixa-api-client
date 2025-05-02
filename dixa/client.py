@@ -263,7 +263,8 @@ class DixaClient:
                     extra={"response": response.text},
                 )
                 break
-            url = response.get("meta", {}).get("next")
+            meta = response.get("meta", {})
+            url = meta.get("next") if meta is not None else ""
         self._logger.debug(
             "Fetched all pages", extra={"pages": pages, "records": len(data)}
         )
@@ -272,7 +273,7 @@ class DixaClient:
     def get(
         self,
         url: str,
-        query: Mapping[str, Any] | None = None,
+        query: Union[Mapping[str, Any], None] = None,
         expected: Type[Union[dict, list]] = dict,
     ) -> Union[dict, list]:
         response = self._request(RequestMethod.GET, url, query=query)
@@ -281,7 +282,7 @@ class DixaClient:
     def post(
         self,
         url: str,
-        json: Mapping[str, Any] | None = None,
+        json: Union[Mapping[str, Any], None] = None,
         expected: Type[Union[dict, list]] = dict,
     ) -> Union[dict, list]:
         response = self._request(RequestMethod.POST, url, json=json)
@@ -290,7 +291,7 @@ class DixaClient:
     def put(
         self,
         url: str,
-        json: Mapping[str, Any] | None = None,
+        json: Union[Mapping[str, Any], None] = None,
         expected: Type[Union[dict, list]] = dict,
     ) -> Union[dict, list]:
         response = self._request(RequestMethod.PUT, url, json=json)
@@ -299,7 +300,7 @@ class DixaClient:
     def delete(
         self,
         url: str,
-        json: Mapping[str, Any] | None = None,
+        json: Union[Mapping[str, Any], None] = None,
         expected: Type[Union[dict, list]] = dict,
     ) -> Union[dict, list]:
         response = self._request(RequestMethod.DELETE, url, json=json)
@@ -308,7 +309,7 @@ class DixaClient:
     def patch(
         self,
         url: str,
-        json: Mapping[str, Any] | None = None,
+        json: Union[Mapping[str, Any], None] = None,
         expected: Type[Union[dict, list]] = dict,
     ) -> Union[dict, list]:
         response = self._request(RequestMethod.PATCH, url, json=json)

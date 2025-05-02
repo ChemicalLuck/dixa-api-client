@@ -1,10 +1,17 @@
-from typing import Literal, Required, TypedDict
+from typing import Literal, TypedDict
 
-type TagState = Literal["Active", "Inactive"]
+TagState = Literal["Active", "Inactive"]
 
 
-class Tag(TypedDict, total=False):
+class _TagRequired(TypedDict):
+    id: str
+    name: str
+    state: TagState
+
+
+class _TagOptional(TypedDict, total=False):
     color: str
-    id: Required[str]
-    name: Required[str]
-    state: Required[TagState]
+
+
+class Tag(_TagRequired, _TagOptional):
+    pass

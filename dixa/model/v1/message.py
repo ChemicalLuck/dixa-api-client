@@ -1,42 +1,15 @@
-from typing import Literal, Optional, Required, TypedDict
-
-type MessageAttributes = (
-    CallRecordingAttributes
-    | ChatAttributes
-    | ContactFormAttributes
-    | EmailAttributes
-    | FacebookMessengerAttributes
-    | GenericAttributes
-    | PhoneAttributes
-    | SmsAttributes
-    | TwitterAttributes
-    | WhatsAppAttributes
-)
-
-
-class Message(TypedDict):
-    """Message data."""
-
-    id: str
-    authorId: str
-    externalId: Optional[str]
-    createdAt: str
-    attributes: MessageAttributes
+from typing import List, Literal, Optional, TypedDict, Union
 
 
 class Attachment(TypedDict):
-    """Attachment data."""
-
     prettyName: str
     url: str
 
 
-type Direction = Literal["Inbound", "Outbound"]
+Direction = Literal["Inbound", "Outbound"]
 
 
 class CallRecordingAttributes(TypedDict):
-    """Call recording attributes."""
-
     duration: Optional[int]
     recording: str
     _type: Literal["CallRecordingAttributes"]
@@ -52,131 +25,190 @@ class TextContent(TypedDict):
     _type: Literal["Text"]
 
 
-type Content = HtmlContent | TextContent
+Content = Union[HtmlContent, TextContent]
 
 
 class EmailContent(TypedDict):
-    """Email content data."""
-
     content: Content
 
 
 class EmailContact(TypedDict):
-    """Email contact data."""
-
     email: str
     name: str
 
 
 class File(TypedDict):
-    """File data."""
-
     prettyName: str
     url: str
 
 
-class ChatAttributes(TypedDict, total=False):
-    attachments: list[Attachment]
+class _ChatAttributesRequired(TypedDict):
+    isAutomated: bool
+    _type: Literal["ChatAttributes"]
+
+
+class _ChatAttributesOptional(TypedDict, total=False):
+    attachments: List[Attachment]
     content: Content
     direction: Direction
-    isAutomated: Required[bool]
-    _type: Required[Literal["ChatAttributes"]]
 
 
-ContactFormAttributes = TypedDict(
-    "ContactFormAttributes",
-    {
-        "attachments": list[Attachment],
-        "bcc": list[EmailContact],
-        "cc": list[EmailContact],
-        "deliveryFailureReason": str,
-        "direction": Direction,
-        "emailContent": EmailContent,
-        "from": EmailContact,
-        "inlineImages": list[File],
-        "isAutoReply": Required[bool],
-        "originalContentUrl": File,
-        "replyDefaultToEmails": list[EmailContact],
-        "to": list[EmailContact],
-        "_type": Required[Literal["ContactFormAttributes"]],
-    },
-    total=False,
-)
-
-EmailAttributes = TypedDict(
-    "EmailAttributes",
-    {
-        "attachments": list[Attachment],
-        "bcc": list[EmailContact],
-        "cc": list[EmailContact],
-        "deliveryFailureReason": str,
-        "direction": Direction,
-        "emailContent": EmailContent,
-        "from": Required[EmailContact],
-        "inlineImages": list[File],
-        "isAutoReply": Required[bool],
-        "originalContentUrl": File,
-        "replyDefaultToEmails": list[EmailContact],
-        "to": list[EmailContact],
-        "_type": Required[Literal["EmailAttributes"]],
-    },
-    total=False,
-)
+class ChatAttributes(_ChatAttributesRequired, _ChatAttributesOptional):
+    pass
 
 
-class FacebookMessengerAttributes(TypedDict, total=False):
-    """Facebook Messenger attributes."""
+class _ContactFormAttributesRequired(TypedDict):
+    isAutoReply: bool
+    _type: Literal["ContactFormAttributes"]
 
-    attachments: list[Attachment]
+
+class _ContactFormAttributesOptional(TypedDict, total=False):
+    attachments: List[Attachment]
+    bcc: List[EmailContact]
+    cc: List[EmailContact]
+    deliveryFailureReason: str
+    direction: Direction
+    emailContent: EmailContent
+    from_: EmailContact
+    inlineImages: List[File]
+    originalContentUrl: File
+    replyDefaultToEmails: List[EmailContact]
+    to: List[EmailContact]
+
+
+class ContactFormAttributes(
+    _ContactFormAttributesRequired, _ContactFormAttributesOptional
+):
+    pass
+
+
+class _EmailAttributesRequired(TypedDict):
+    from_: EmailContact
+    isAutoReply: bool
+    _type: Literal["EmailAttributes"]
+
+
+class _EmailAttributesOptional(TypedDict, total=False):
+    attachments: List[Attachment]
+    bcc: List[EmailContact]
+    cc: List[EmailContact]
+    deliveryFailureReason: str
+    direction: Direction
+    emailContent: EmailContent
+    inlineImages: List[File]
+    originalContentUrl: File
+    replyDefaultToEmails: List[EmailContact]
+    to: List[EmailContact]
+
+
+class EmailAttributes(_EmailAttributesRequired, _EmailAttributesOptional):
+    pass
+
+
+class _FacebookMessengerAttributesRequired(TypedDict):
+    _type: Literal["FacebookMessengerAttributes"]
+
+
+class _FacebookMessengerAttributesOptional(TypedDict, total=False):
+    attachments: List[Attachment]
     content: Content
     direction: Direction
-    _type: Required[Literal["FacebookMessengerAttributes"]]
 
 
-class GenericAttributes(TypedDict, total=False):
-    """Generic attributes."""
+class FacebookMessengerAttributes(
+    _FacebookMessengerAttributesRequired, _FacebookMessengerAttributesOptional
+):
+    pass
 
-    attachments: list[Attachment]
+
+class _GenericAttributesRequired(TypedDict):
+    _type: Literal["GenericAttributes"]
+
+
+class _GenericAttributesOptional(TypedDict, total=False):
+    attachments: List[Attachment]
     content: Content
     direction: Direction
-    _type: Required[Literal["GenericAttributes"]]
 
 
-PhoneAttributes = TypedDict(
-    "PhoneAttributes",
-    {
-        "direction": Direction,
-        "duration": int,
-        "from": Required[str],
-        "to": Required[str],
-        "_type": Required[Literal["PhoneAttributes"]],
-    },
-    total=False,
-)
+class GenericAttributes(_GenericAttributesRequired, _GenericAttributesOptional):
+    pass
 
 
-class SmsAttributes(TypedDict, total=False):
-    """SMS attributes."""
+class _PhoneAttributesRequired(TypedDict):
+    from_: str
+    to: str
+    _type: Literal["PhoneAttributes"]
 
-    attachments: list[Attachment]
+
+class _PhoneAttributesOptional(TypedDict, total=False):
+    direction: Direction
+    duration: int
+
+
+class PhoneAttributes(_PhoneAttributesRequired, _PhoneAttributesOptional):
+    pass
+
+
+class _SmsAttributesRequired(TypedDict):
+    _type: Literal["SmsAttributes"]
+
+
+class _SmsAttributesOptional(TypedDict, total=False):
+    attachments: List[Attachment]
     content: Content
     direction: Direction
-    _type: Required[Literal["SmsAttributes"]]
 
 
-class TwitterAttributes(TypedDict, total=False):
-    """Twitter attributes."""
+class SmsAttributes(_SmsAttributesRequired, _SmsAttributesOptional):
+    pass
 
-    attachments: list[Attachment]
+
+class _TwitterAttributesRequired(TypedDict):
+    _type: Literal["TwitterAttributes"]
+
+
+class _TwitterAttributesOptional(TypedDict, total=False):
+    attachments: List[Attachment]
     content: Content
     direction: Direction
-    _type: Required[Literal["TwitterAttributes"]]
 
 
-class WhatsAppAttributes(TypedDict, total=False):
-    """WhatsApp attributes."""
+class TwitterAttributes(_TwitterAttributesRequired, _TwitterAttributesOptional):
+    pass
 
-    attachments: list[Attachment]
+
+class _WhatsAppAttributesRequired(TypedDict):
+    _type: Literal["WhatsAppAttributes"]
+
+
+class _WhatsAppAttributesOptional(TypedDict, total=False):
+    attachments: List[Attachment]
     content: Content
     direction: Direction
-    _type: Required[Literal["WhatsAppAttributes"]]
+
+
+class WhatsAppAttributes(_WhatsAppAttributesRequired, _WhatsAppAttributesOptional):
+    pass
+
+
+MessageAttributes = Union[
+    CallRecordingAttributes,
+    ChatAttributes,
+    ContactFormAttributes,
+    EmailAttributes,
+    FacebookMessengerAttributes,
+    GenericAttributes,
+    PhoneAttributes,
+    SmsAttributes,
+    TwitterAttributes,
+    WhatsAppAttributes,
+]
+
+
+class Message(TypedDict):
+    id: str
+    authorId: str
+    externalId: Optional[str]
+    createdAt: str
+    attributes: MessageAttributes

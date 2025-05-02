@@ -1,4 +1,4 @@
-from typing import Required, TypedDict
+from typing import Dict, List, TypedDict, Union
 
 from dixa.api import DixaResource, DixaVersion
 from dixa.exceptions import DixaAPIError
@@ -13,15 +13,15 @@ from dixa.model.v1.end_user import (
 
 
 class EndUserCreateBody(TypedDict, total=False):
-    additionalEmails: list[str]
-    additionalPhoneNumbers: list[str]
+    additionalEmails: List[str]
+    additionalPhoneNumbers: List[str]
     avatarUrl: str
     displayName: str
     email: str
     externalId: str
     firstName: str
     lastName: str
-    middleNames: list[str]
+    middleNames: List[str]
     phoneNumber: str
 
 
@@ -32,61 +32,78 @@ class EndUserListQuery(TypedDict, total=False):
 
 
 class EndUserPatchBody(TypedDict, total=False):
-    additionalEmails: list[str]
-    additionalPhoneNumbers: list[str]
+    additionalEmails: List[str]
+    additionalPhoneNumbers: List[str]
     avatarUrl: str
     displayName: str
     email: str
     externalId: str
     firstName: str
     lastName: str
-    middleNames: list[str]
+    middleNames: List[str]
     phoneNumber: str
 
 
-# Implement as dict[str, str | list[str]]
-type EndUserPatchCustomAttributesBody = dict[str, str | list[str]]
+EndUserPatchCustomAttributesBody = Dict[str, Union[str, List[str]]]
 
 
-class EndUserPatchBulkBody(TypedDict, total=False):
-    additionalEmails: list[str]
-    additionalPhoneNumbers: list[str]
+class _EndUserPatchBulkBodyRequired(TypedDict):
+    id: str
+
+
+class _EndUserPatchBulkBodyOptional(TypedDict, total=False):
+    additionalEmails: List[str]
+    additionalPhoneNumbers: List[str]
     avatarUrl: str
     displayName: str
     email: str
     externalId: str
     firstName: str
-    id: Required[str]
     lastName: str
-    middleNames: list[str]
+    middleNames: List[str]
     phoneNumber: str
+
+
+class EndUserPatchBulkBody(
+    _EndUserPatchBulkBodyRequired, _EndUserPatchBulkBodyOptional
+):
+    pass
 
 
 class EndUserUpdateBody(TypedDict, total=False):
-    additionalEmails: list[str]
-    additionalPhoneNumbers: list[str]
+    additionalEmails: List[str]
+    additionalPhoneNumbers: List[str]
     avatarUrl: str
     displayName: str
     email: str
     externalId: str
     firstName: str
     lastName: str
-    middleNames: list[str]
+    middleNames: List[str]
     phoneNumber: str
 
 
-class EndUserUpdateBulkBody(TypedDict, total=False):
-    additionalEmails: list[str]
-    additionalPhoneNumbers: list[str]
+class _EndUserUpdateBulkBodyRequired(TypedDict):
+    id: str  # Required field
+
+
+class _EndUserUpdateBulkBodyOptional(TypedDict, total=False):
+    additionalEmails: List[str]
+    additionalPhoneNumbers: List[str]
     avatarUrl: str
     displayName: str
     email: str
     externalId: str
     firstName: str
-    id: Required[str]
     lastName: str
-    middleNames: list[str]
+    middleNames: List[str]
     phoneNumber: str
+
+
+class EndUserUpdateBulkBody(
+    _EndUserUpdateBulkBodyRequired, _EndUserUpdateBulkBodyOptional
+):
+    pass
 
 
 class EndUserResource(DixaResource):
@@ -116,8 +133,8 @@ class EndUserResource(DixaResource):
         return EndUser(**data)
 
     def create_bulk(
-        self, body: list[EndUserCreateBody]
-    ) -> list[EndUserPatchBulkActionOutcome]:
+        self, body: List[EndUserCreateBody]
+    ) -> List[EndUserPatchBulkActionOutcome]:
         """Create end users.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/End-Users/#tag/End-Users/operation/postEndusersBulk
         """
@@ -149,7 +166,7 @@ class EndUserResource(DixaResource):
             raise DixaAPIError(f"Expected dict, got {type(data).__name__}")
         return EndUser(**data)
 
-    def list_conversations(self, end_user_id: str) -> list[Conversation]:
+    def list_conversations(self, end_user_id: str) -> List[Conversation]:
         """List conversations.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/End-Users/#tag/End-Users/operation/getEndusersUseridConversations
         """
@@ -166,7 +183,7 @@ class EndUserResource(DixaResource):
                 f"Expected one of {ConversationTypes}, got {type(data).__name__}"
             )
 
-    def list_(self, query: EndUserListQuery | None = None) -> list[EndUser]:
+    def list_(self, query: Union[EndUserListQuery, None] = None) -> List[EndUser]:
         """List end users.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/End-Users/#tag/End-Users/operation/getEndusers
         """
@@ -183,7 +200,7 @@ class EndUserResource(DixaResource):
 
     def patch_end_user_custom_attributes(
         self, end_user_id: str, body: EndUserPatchCustomAttributesBody
-    ) -> list[EndUserCustomAttribute]:
+    ) -> List[EndUserCustomAttribute]:
         """Patch end user custom attributes.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/End-Users/#tag/End-Users/operation/patchEndusersUseridCustom-attributes
         """
@@ -195,8 +212,8 @@ class EndUserResource(DixaResource):
         return [EndUserCustomAttribute(**attribute) for attribute in data]
 
     def patch_bulk(
-        self, body: list[EndUserPatchBulkBody]
-    ) -> list[EndUserPatchBulkActionOutcome]:
+        self, body: List[EndUserPatchBulkBody]
+    ) -> List[EndUserPatchBulkActionOutcome]:
         """Patch end users.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/End-Users/#tag/End-Users/operation/patchEndusers
         """
@@ -228,8 +245,8 @@ class EndUserResource(DixaResource):
         return EndUser(**data)
 
     def update_bulk(
-        self, body: list[EndUserUpdateBulkBody]
-    ) -> list[EndUserPatchBulkActionOutcome]:
+        self, body: List[EndUserUpdateBulkBody]
+    ) -> List[EndUserPatchBulkActionOutcome]:
         """Update an end users.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/End-Users/#tag/End-Users/operation/putEndusers
         """

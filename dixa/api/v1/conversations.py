@@ -1,4 +1,4 @@
-from typing import Literal, Optional, Required, TypedDict
+from typing import Dict, List, Literal, Optional, TypedDict, Union
 
 from dixa.api import DixaResource, DixaVersion
 from dixa.exceptions import DixaAPIError
@@ -20,39 +20,77 @@ from dixa.model.v1.message import Content, Direction, File, Message
 from dixa.model.v1.tag import Tag
 
 
-class ConversationAddInternalNoteBody(TypedDict, total=False):
+class _ConversationAddInternalNoteBodyRequired(TypedDict):
+    message: str
+
+
+class _ConversationAddInternalNoteBodyOptional(TypedDict, total=False):
     agentId: str
     createdAt: str
-    message: Required[str]
 
 
-class ConversationAddMessageInboundBody(TypedDict, total=False):
-    attachments: list[File]
-    content: Required[Content]
+class ConversationAddInternalNoteBody(
+    _ConversationAddInternalNoteBodyRequired, _ConversationAddInternalNoteBodyOptional
+):
+    pass
+
+
+class _ConversationAddMessageInboundBodyRequired(TypedDict):
+    content: "Content"  # Required field
+
+
+class _ConversationAddMessageInboundBodyOptional(TypedDict, total=False):
+    attachments: List["File"]
     externalId: str
     integrationEmail: str
     _type: Literal["Inbound"]
 
 
-class ConversationAddMessageOutboundBody(TypedDict, total=False):
-    agentId: Required[str]
-    attachments: list[File]
-    bcc: list[str]
-    cc: list[str]
-    content: Required[Content]
+class ConversationAddMessageInboundBody(
+    _ConversationAddMessageInboundBodyRequired,
+    _ConversationAddMessageInboundBodyOptional,
+):
+    pass
+
+
+class _ConversationAddMessageOutboundBodyRequired(TypedDict):
+    agentId: str
+    content: "Content"
+
+
+class _ConversationAddMessageOutboundBodyOptional(TypedDict, total=False):
+    attachments: List["File"]
+    bcc: List[str]
+    cc: List[str]
     externalId: str
     integrationEmail: str
     _type: Literal["Outbound"]
 
 
-type ConversationAddMessageBody = (
-    ConversationAddMessageInboundBody | ConversationAddMessageOutboundBody
-)
+class ConversationAddMessageOutboundBody(
+    _ConversationAddMessageOutboundBodyRequired,
+    _ConversationAddMessageOutboundBodyOptional,
+):
+    pass
 
 
-class ConversationClaimBody(TypedDict, total=False):
-    agentId: Required[str]
+ConversationAddMessageBody = Union[
+    ConversationAddMessageInboundBody, ConversationAddMessageOutboundBody
+]
+
+
+class _ConversationClaimBodyRequired(TypedDict):
+    agentId: str
+
+
+class _ConversationClaimBodyOptional(TypedDict, total=False):
     force: bool
+
+
+class ConversationClaimBody(
+    _ConversationClaimBodyRequired, _ConversationClaimBodyOptional
+):
+    pass
 
 
 class ConversationCloseBody(TypedDict, total=False):
@@ -101,20 +139,20 @@ class ConversationSmsCreateBody(TypedDict):
     _type: Literal["Sms"]
 
 
-type ConversationCreateBody = (
-    ConversationCallbackCreateBody
-    | ConversationChatCreateBody
-    | ConversationContactFormCreateBody
-    | ConversationEmailCreateBody
-    | ConversationSmsCreateBody
-)
+ConversationCreateBody = Union[
+    ConversationCallbackCreateBody,
+    ConversationChatCreateBody,
+    ConversationContactFormCreateBody,
+    ConversationEmailCreateBody,
+    ConversationSmsCreateBody,
+]
 
 
 class ConversationListFlowsQuery(TypedDict):
     channel: Channel
 
 
-type ConversationPatchCustomAttributesBody = dict[str, str | list[str]]
+ConversationPatchCustomAttributesBody = Dict[str, Union[str, List[str]]]
 
 
 class ConversationReopenBody(TypedDict):
@@ -126,9 +164,18 @@ class ConversationSearchQuery(TypedDict):
     query: str
 
 
-class ConversationTransferBody(TypedDict, total=False):
-    queueId: Required[str]
+class _ConversationTransferBodyRequired(TypedDict):
+    queueId: str
+
+
+class _ConversationTransferBodyOptional(TypedDict, total=False):
     userId: str
+
+
+class ConversationTransferBody(
+    _ConversationTransferBodyRequired, _ConversationTransferBodyOptional
+):
+    pass
 
 
 class ConversationResource(DixaResource):
@@ -151,8 +198,8 @@ class ConversationResource(DixaResource):
         return InternalNote(**data)
 
     def add_internal_notes(
-        self, conversation_id: str, body: list[ConversationAddInternalNoteBody]
-    ) -> list[InternalNote]:
+        self, conversation_id: str, body: List[ConversationAddInternalNoteBody]
+    ) -> List[InternalNote]:
         """Add internal notes to a conversation.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/postConversationsConversationidNotesBulk
         """
@@ -242,27 +289,29 @@ class ConversationResource(DixaResource):
             f"Expected one of {ConversationTypes}, got {type(data).__name__}"
         )
 
-    def list_activity_logs(self, conversation_id: str) -> list[ActivityLog]:
+    def list_activity_logs(self, conversation_id: str) -> List[ActivityLog]:
         """List activity logs.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getConversationsConversationidActivitylog
         """
         return self.client.paginate(f"{self._url}/{conversation_id}/activitylog")
 
     def list_flows(
-        self, conversation_id: str, query: ConversationListFlowsQuery | None = None
-    ) -> list[ConversationFlow]:
+        self,
+        conversation_id: str,
+        query: Union[ConversationListFlowsQuery, None] = None,
+    ) -> List[ConversationFlow]:
         """List flows.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getConversationsFlows
         """
         return self.client.paginate(f"{self._url}/{conversation_id}/flows", query)
 
-    def list_internal_notes(self, conversation_id: str) -> list[InternalNote]:
+    def list_internal_notes(self, conversation_id: str) -> List[InternalNote]:
         """List internal notes.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getConversationsConversationidNotes
         """
         return self.client.paginate(f"{self._url}/{conversation_id}/notes")
 
-    def list_linked_conversations(self, conversation_id: str) -> list[Conversation]:
+    def list_linked_conversations(self, conversation_id: str) -> List[Conversation]:
         """List linked conversations.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getConversationsConversationidLinked
         """
@@ -283,25 +332,25 @@ class ConversationResource(DixaResource):
                 )
         return results
 
-    def list_messages(self, conversation_id: str) -> list[Message]:
+    def list_messages(self, conversation_id: str) -> List[Message]:
         """List messages.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getConversationsConversationidMessages
         """
         return self.client.paginate(f"{self._url}/{conversation_id}/messages")
 
-    def list_organization_activity_log(self, conversation_id: str) -> list[ActivityLog]:
+    def list_organization_activity_log(self, conversation_id: str) -> List[ActivityLog]:
         """List organization activity log.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getConversationsActivitylog
         """
         return self.client.paginate(f"{self._url}/{conversation_id}/activitylog")
 
-    def list_rating(self, conversation_id: str) -> list[ConversationRating]:
+    def list_rating(self, conversation_id: str) -> List[ConversationRating]:
         """List rating.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getConversationsConversationidRating
         """
         return self.client.paginate(f"{self._url}/{conversation_id}/rating")
 
-    def list_tags(self, conversation_id: str) -> list[Tag]:
+    def list_tags(self, conversation_id: str) -> List[Tag]:
         """List tags.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getConversationsConversationidTags
         """
@@ -309,7 +358,7 @@ class ConversationResource(DixaResource):
 
     def patch_conversation_custom_attributes(
         self, conversation_id: str, body: ConversationPatchCustomAttributesBody
-    ) -> list[ConversationCustomAttribute]:
+    ) -> List[ConversationCustomAttribute]:
         """Patch conversation custom attributes.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/patchConversationsConversationidCustom-attributes
         """
@@ -326,7 +375,7 @@ class ConversationResource(DixaResource):
         """
         return self.client.put(f"{self._url}/{conversation_id}/reopen", body)
 
-    def search(self, query: ConversationSearchQuery) -> list[ConversationSearchHit]:
+    def search(self, query: ConversationSearchQuery) -> List[ConversationSearchHit]:
         """Search conversations.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getSearchConversations
         """

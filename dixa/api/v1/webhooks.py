@@ -1,4 +1,4 @@
-from typing import Required, TypedDict
+from typing import List, TypedDict
 
 from dixa.api import DixaResource, DixaVersion
 from dixa.exceptions import DixaAPIError
@@ -11,18 +11,25 @@ from dixa.model.v1.webhook_subscription import (
 )
 
 
-class WebhookCreateBody(TypedDict, total=False):
-    authorization: Authorization
+class _WebhookCreateBodyRequired(TypedDict):
+    name: str
+    url: str
+
+
+class _WebhookCreateBodyOptional(TypedDict, total=False):
+    authorization: "Authorization"
     enabled: bool
-    events: list[Event]
-    name: Required[str]
-    url: Required[str]
+    events: List["Event"]
+
+
+class WebhookCreateBody(_WebhookCreateBodyRequired, _WebhookCreateBodyOptional):
+    pass
 
 
 class WebhookPatchBody(TypedDict, total=False):
     authorization: Authorization
     enabled: bool
-    events: list[Event]
+    events: List[Event]
     name: str
     url: str
 
@@ -50,7 +57,7 @@ class WebhookResource(DixaResource):
         """
         return self.client.delete(f"{self._url}/{webhook_subscription_id}")
 
-    def list_(self) -> list[WebhookSubscription]:
+    def list_(self) -> List[WebhookSubscription]:
         """List webhooks.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Webhooks/#tag/Webhooks/operation/getWebhooks
         """
@@ -78,7 +85,7 @@ class WebhookResource(DixaResource):
 
     def list_event_logs(
         self, webhook_subscription_id: str, event: str
-    ) -> list[EventDeliveryLog]:
+    ) -> List[EventDeliveryLog]:
         """Get event logs.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Webhooks/#tag/Webhooks/operation/getWebhooksWebhooksubscriptionidDelivery-statusLogsEvent
         """
@@ -88,7 +95,7 @@ class WebhookResource(DixaResource):
 
     def list_delivery_statuses(
         self, webhook_subscription_id: str
-    ) -> list[EventDeliveryStatus]:
+    ) -> List[EventDeliveryStatus]:
         """Get delivery statuses.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Webhooks/#tag/Webhooks/operation/getWebhooksWebhooksubscriptionidDelivery-status
         """

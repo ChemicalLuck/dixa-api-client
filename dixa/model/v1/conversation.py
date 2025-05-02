@@ -1,12 +1,19 @@
-from typing import Literal, Required, TypedDict
+from typing import Dict, List, Literal, TypedDict, Union
 
 
-class Queue(TypedDict, total=False):
-    id: Required[str]
+class _QueueRequired(TypedDict):
+    id: str
+
+
+class _QueueOptional(TypedDict, total=False):
     queuedAt: str
 
 
-type Channel = Literal[
+class Queue(_QueueRequired, _QueueOptional):
+    pass
+
+
+Channel = Literal[
     "WhatsApp",
     "Voicemail",
     "WidgetChat",
@@ -19,22 +26,29 @@ type Channel = Literal[
     "Messenger",
 ]
 
-type RatingStatus = Literal["Unscheduled", "Offered", "Rated", "Scheduled", "Cancelled"]
+RatingStatus = Literal["Unscheduled", "Offered", "Rated", "Scheduled", "Cancelled"]
 
-type RatingType = Literal["CSAT", "ThumbsUpOrDown"]
+RatingType = Literal["CSAT", "ThumbsUpOrDown"]
 
 
-class ConversationRating(TypedDict, total=False):
+class _ConversationRatingRequired(TypedDict):
+    conversationChannel: Channel
+    id: str
+    ratingStatus: RatingStatus
+    ratingType: RatingType
+    timestamps: Dict[str, str]
+    userId: str
+
+
+class _ConversationRatingOptional(TypedDict, total=False):
     agentId: str
-    conversationChannel: Required[Channel]
-    id: Required[str]
     language: str
     ratingCommend: str
     ratingScore: int
-    ratingStatus: Required[RatingStatus]
-    ratingType: Required[RatingType]
-    timestamps: Required[dict[str, str]]
-    userId: Required[str]
+
+
+class ConversationRating(_ConversationRatingRequired, _ConversationRatingOptional):
+    pass
 
 
 class ConversationFlow(TypedDict):
@@ -48,7 +62,7 @@ class ConversationCustomAttribute(TypedDict):
     id: str
     identifier: str
     name: str
-    value: str | list[str]
+    value: Union[str, List[str]]
 
 
 class EmailForward(TypedDict):
@@ -66,22 +80,31 @@ class SideConversation(TypedDict):
     parentId: str
 
 
-type ConversationLink = EmailForward | FollowUp | SideConversation
+ConversationLink = Union[EmailForward, FollowUp, SideConversation]
 
-type ConversationState = Literal["AwaitingPending", "Pending", "Closed", "Open"]
+ConversationState = Literal["AwaitingPending", "Pending", "Closed", "Open"]
 
 
-class AnonymizedConversation(TypedDict, total=False):
-    anonymizedAt: Required[str]
-    channel: Required[Channel]
-    createdAt: Required[str]
-    customAttributes: list[ConversationCustomAttribute]
-    id: Required[str]
+class _AnonymizedConversationRequired(TypedDict):
+    anonymizedAt: str
+    channel: Channel
+    createdAt: str
+    id: str
+    requesterId: str
+
+
+class _AnonymizedConversationOptional(TypedDict, total=False):
+    customAttributes: List[ConversationCustomAttribute]
     link: ConversationLink
-    requesterId: Required[str]
     state: ConversationState
     stateUpdatedAt: str
     _type: Literal["AnonymizedConversation"]
+
+
+class AnonymizedConversation(
+    _AnonymizedConversationRequired, _AnonymizedConversationOptional
+):
+    pass
 
 
 class Assignment(TypedDict):
@@ -89,46 +112,63 @@ class Assignment(TypedDict):
     assignedAt: str
 
 
-class BrowserInfo(TypedDict, total=False):
+class _BrowserInfoRequired(TypedDict):
+    name: str
+
+
+class _BrowserInfoOptional(TypedDict, total=False):
     ipAddress: str
-    name: Required[str]
     originatingUrl: str
     version: str
 
 
-type Direction = Literal["Inbound", "Outbound"]
+class BrowserInfo(_BrowserInfoRequired, _BrowserInfoOptional):
+    pass
 
 
-class ChatConversation(TypedDict, total=False):
+Direction = Literal["Inbound", "Outbound"]
+
+
+class _ChatConversationRequired(TypedDict):
+    channel: Channel
+    createdAt: str
+    id: str
+    requesterId: str
+
+
+class _ChatConversationOptional(TypedDict, total=False):
     assignment: Assignment
     browserInfo: BrowserInfo
-    channel: Required[Channel]
-    createdAt: Required[str]
-    customAttributes: list[ConversationCustomAttribute]
+    customAttributes: List[ConversationCustomAttribute]
     direction: Direction
-    id: Required[str]
     language: str
     link: ConversationLink
     queue: Queue
-    requesterId: Required[str]
     state: ConversationState
     stateUpdatedAt: str
     _type: Literal["ChatConversation"]
 
 
-class ContactFormConversation(TypedDict, total=False):
+class ChatConversation(_ChatConversationRequired, _ChatConversationOptional):
+    pass
+
+
+class _ContactFormConversationRequired(TypedDict):
+    channel: Channel
+    createdAt: str
+    fromEmail: str
+    id: str
+    requesterId: str
+
+
+class _ContactFormConversationOptional(TypedDict, total=False):
     assignment: Assignment
-    channel: Required[Channel]
-    createdAt: Required[str]
-    customAttributes: list[ConversationCustomAttribute]
+    customAttributes: List[ConversationCustomAttribute]
     direction: Direction
-    fromEmail: Required[str]
-    id: Required[str]
     integrationEmail: str
     language: str
     link: ConversationLink
     queue: Queue
-    requesterId: Required[str]
     state: ConversationState
     stateUpdatedAt: str
     subject: str
@@ -136,166 +176,255 @@ class ContactFormConversation(TypedDict, total=False):
     _type: Literal["ContactFormConversation"]
 
 
-class EmailConversation(TypedDict, total=False):
+class ContactFormConversation(
+    _ContactFormConversationRequired, _ContactFormConversationOptional
+):
+    pass
+
+
+class _EmailConversationRequired(TypedDict):
+    channel: Channel
+    createdAt: str
+    fromEmail: str
+    id: str
+    requesterId: str
+    toEmail: str
+
+
+class _EmailConversationOptional(TypedDict, total=False):
     assignment: Assignment
-    channel: Required[Channel]
-    createdAt: Required[str]
-    customAttributes: list[ConversationCustomAttribute]
+    customAttributes: List[ConversationCustomAttribute]
     direction: Direction
-    fromEmail: Required[str]
-    id: Required[str]
     integrationEmail: str
     language: str
     link: ConversationLink
     queue: Queue
-    requesterId: Required[str]
     state: ConversationState
     stateUpdatedAt: str
     subject: str
-    toEmail: Required[str]
     _type: Literal["EmailConversation"]
 
 
-class FacebookMessengerConversation(TypedDict, total=False):
+class EmailConversation(_EmailConversationRequired, _EmailConversationOptional):
+    pass
+
+
+class _FacebookMessengerConversationRequired(TypedDict):
+    channel: Channel
+    createdAt: str
+    id: str
+    requesterId: str
+
+
+class _FacebookMessengerConversationOptional(TypedDict, total=False):
     assignment: Assignment
-    channel: Required[Channel]
-    createdAt: Required[str]
-    customAttributes: list[ConversationCustomAttribute]
+    customAttributes: List[ConversationCustomAttribute]
     direction: Direction
-    id: Required[str]
     link: ConversationLink
     queue: Queue
-    requesterId: Required[str]
     state: ConversationState
     stateUpdatedAt: str
     _type: Literal["FacebookMessengerConversation"]
 
 
-class GenericConversation(TypedDict, total=False):
+class FacebookMessengerConversation(
+    _FacebookMessengerConversationRequired, _FacebookMessengerConversationOptional
+):
+    pass
+
+
+class _GenericConversationRequired(TypedDict):
+    channel: Channel
+    createdAt: str
+    id: str
+    requesterId: str
+
+
+class _GenericConversationOptional(TypedDict, total=False):
     assignment: Assignment
-    channel: Required[Channel]
-    createdAt: Required[str]
-    customAttributes: list[ConversationCustomAttribute]
+    customAttributes: List[ConversationCustomAttribute]
     direction: Direction
     fromContactPointId: str
-    id: Required[str]
     link: ConversationLink
     queue: Queue
-    requesterId: Required[str]
     state: ConversationState
     stateUpdatedAt: str
     toContactPointId: str
     _type: Literal["GenericConversation"]
 
 
-class MessengerConversation(TypedDict, total=False):
+class GenericConversation(_GenericConversationRequired, _GenericConversationOptional):
+    pass
+
+
+class _MessengerConversationRequired(TypedDict):
+    channel: Channel
+    createdAt: str
+    id: str
+    requesterId: str
+
+
+class _MessengerConversationOptional(TypedDict, total=False):
     assignment: Assignment
-    channel: Required[Channel]
-    createdAt: Required[str]
-    customAttributes: list[ConversationCustomAttribute]
+    customAttributes: List[ConversationCustomAttribute]
     direction: Direction
-    id: Required[str]
     language: str
     link: ConversationLink
     queue: Queue
-    requesterId: Required[str]
     state: ConversationState
     stateUpdatedAt: str
     _type: Literal["MessengerConversation"]
 
 
-class PstnPhoneConversation(TypedDict, total=False):
+class MessengerConversation(
+    _MessengerConversationRequired, _MessengerConversationOptional
+):
+    pass
+
+
+class _PstnPhoneConversationRequired(TypedDict):
+    channel: Channel
+    createdAt: str
+    id: str
+    requesterId: str
+
+
+class _PstnPhoneConversationOptional(TypedDict, total=False):
     assignment: Assignment
-    channel: Required[Channel]
-    createdAt: Required[str]
-    customAttributes: list[ConversationCustomAttribute]
+    customAttributes: List[ConversationCustomAttribute]
     direction: Direction
-    id: Required[str]
     link: ConversationLink
     queue: Queue
-    requesterId: Required[str]
     state: ConversationState
     stateUpdatedAt: str
     _type: Literal["PstnPhoneConversation"]
 
 
-class SmsConversation(TypedDict, total=False):
+class PstnPhoneConversation(
+    _PstnPhoneConversationRequired, _PstnPhoneConversationOptional
+):
+    pass
+
+
+class _SmsConversationRequired(TypedDict):
+    channel: Channel
+    createdAt: str
+    id: str
+    requesterId: str
+
+
+class _SmsConversationOptional(TypedDict, total=False):
     assignment: Assignment
-    channel: Required[Channel]
-    createdAt: Required[str]
-    customAttributes: list[ConversationCustomAttribute]
+    customAttributes: List[ConversationCustomAttribute]
     direction: Direction
     fromNumber: str
-    id: Required[str]
     link: ConversationLink
     queue: Queue
-    requesterId: Required[str]
     state: ConversationState
     stateUpdatedAt: str
     toNumber: str
     _type: Literal["SmsConversation"]
 
 
-type ConversationType = Literal["DirectMessage", "Tweet"]
+class SmsConversation(_SmsConversationRequired, _SmsConversationOptional):
+    pass
 
 
-class TwitterConversation(TypedDict, total=False):
+ConversationType = Literal["DirectMessage", "Tweet"]
+
+
+class _TwitterConversationRequired(TypedDict):
+    channel: Channel
+    conversationType: ConversationType
+    createdAt: str
+    id: str
+    requesterId: str
+
+
+class _TwitterConversationOptional(TypedDict, total=False):
     assignment: Assignment
-    channel: Required[Channel]
     contactPointTwitterId: str
-    conversationType: Required[ConversationType]
-    createdAt: Required[str]
-    customAttributes: list[ConversationCustomAttribute]
+    customAttributes: List[ConversationCustomAttribute]
     direction: Direction
     endUserTwitterId: str
-    id: Required[str]
     link: ConversationLink
     queue: Queue
-    requesterId: Required[str]
     state: ConversationState
     stateUpdatedAt: str
     _type: Literal["TwitterConversation"]
 
 
-class WhatsAppConversation(TypedDict, total=False):
+class TwitterConversation(_TwitterConversationRequired, _TwitterConversationOptional):
+    pass
+
+
+class _WhatsAppConversationRequired(TypedDict):
+    channel: Channel
+    createdAt: str
+    id: str
+    requesterId: str
+
+
+class _WhatsAppConversationOptional(TypedDict, total=False):
     assignment: Assignment
-    channel: Required[Channel]
-    createdAt: Required[str]
-    customAttributes: list[ConversationCustomAttribute]
+    customAttributes: List[ConversationCustomAttribute]
     direction: Direction
-    id: Required[str]
     link: ConversationLink
     queue: Queue
-    requesterId: Required[str]
     state: ConversationState
     stateUpdatedAt: str
     _type: Literal["WhatsAppConversation"]
 
 
-class ConversationSearchInnerHit(TypedDict, total=False):
-    highlights: dict[str, list[str]]
-    id: Required[str]
+class WhatsAppConversation(
+    _WhatsAppConversationRequired, _WhatsAppConversationOptional
+):
+    pass
 
 
-class ConversationSearchHit(TypedDict, total=False):
-    highlights: dict[str, list[str]]
-    id: Required[str]
-    innerHits: list[ConversationSearchInnerHit]
+class _ConversationSearchInnerHitRequired(TypedDict):
+    id: str
 
 
-type Conversation = (
-    AnonymizedConversation
-    | ChatConversation
-    | ContactFormConversation
-    | EmailConversation
-    | FacebookMessengerConversation
-    | GenericConversation
-    | MessengerConversation
-    | PstnPhoneConversation
-    | SmsConversation
-    | TwitterConversation
-    | WhatsAppConversation
-)
+class _ConversationSearchInnerHitOptional(TypedDict, total=False):
+    highlights: Dict[str, List[str]]
+
+
+class ConversationSearchInnerHit(
+    _ConversationSearchInnerHitRequired, _ConversationSearchInnerHitOptional
+):
+    pass
+
+
+class _ConversationSearchHitRequired(TypedDict):
+    id: str
+
+
+class _ConversationSearchHitOptional(TypedDict, total=False):
+    highlights: Dict[str, List[str]]
+    innerHits: List[ConversationSearchInnerHit]
+
+
+class ConversationSearchHit(
+    _ConversationSearchHitRequired, _ConversationSearchHitOptional
+):
+    pass
+
+
+Conversation = Union[
+    AnonymizedConversation,
+    ChatConversation,
+    ContactFormConversation,
+    EmailConversation,
+    FacebookMessengerConversation,
+    GenericConversation,
+    MessengerConversation,
+    PstnPhoneConversation,
+    SmsConversation,
+    TwitterConversation,
+    WhatsAppConversation,
+]
+
 
 ConversationTypes = [
     AnonymizedConversation,

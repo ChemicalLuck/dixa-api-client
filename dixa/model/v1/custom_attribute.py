@@ -1,22 +1,22 @@
-from typing import Literal, Optional, TypedDict
+from typing import List, Literal, Optional, TypedDict, Union
 
 
 class SelectOption(TypedDict):
     id: str
     isDeactivated: bool
     label: str
-    nestedOptions: Optional[list[dict]]
+    nestedOptions: Optional[List[dict]]
     value: str
 
 
-SelectOption.__annotations__["nestedOptions"] = Optional[list[SelectOption]]
+SelectOption.__annotations__["nestedOptions"] = Optional[List[SelectOption]]
 
 
 class Select(TypedDict):
     id: str
     isDeactivated: bool
     label: str
-    nestedOptions: Optional[list[SelectOption]]
+    nestedOptions: Optional[List[SelectOption]]
     value: str
 
 
@@ -25,7 +25,7 @@ class Text1(TypedDict, total=False):
 
 
 class CustomAttributeInputDefinition(TypedDict):
-    options: Select | Text1
+    options: Union[Select, Text1]
 
 
 class CustomAttributeDefinition(TypedDict):

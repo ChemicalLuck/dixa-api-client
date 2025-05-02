@@ -1,15 +1,15 @@
-from typing import Literal, Optional, TypedDict
+from typing import Dict, List, Literal, Optional, TypedDict, Union
 
 
 class WebhookSubscription(TypedDict):
     createdAt: str
     createdBy: str
     enabled: bool
-    headers: dict[str, str]
+    headers: Dict[str, str]
     id: str
     name: str
     secretKey: str
-    subscribedEvents: Optional[list[str]]
+    subscribedEvents: Optional[List[str]]
     updatedAt: str
     updatedBy: str
     url: str
@@ -32,9 +32,9 @@ class EventDeliveryLog(TypedDict):
     payload: str
 
 
-type DeliveryStatus = DeliveryDetail | NoRecentDelivery
+DeliveryStatus = Union[DeliveryDetail, NoRecentDelivery]
 
-type Event = Literal[
+Event = Literal[
     "ConversationPending",
     "AgentUnbannedEnduser",
     "ConversationMessageAdded",
@@ -78,4 +78,4 @@ class TokenAuth(TypedDict):
     _type: Literal["TokenAuth"]
 
 
-type Authorization = BasicAuth | NoAuth | TokenAuth
+Authorization = Union[BasicAuth, NoAuth, TokenAuth]

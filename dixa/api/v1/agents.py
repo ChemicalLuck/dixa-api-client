@@ -1,4 +1,4 @@
-from typing import Required, TypedDict
+from typing import List, TypedDict, Union
 
 from dixa.api import DixaResource, DixaVersion
 from dixa.exceptions import DixaAPIError
@@ -11,62 +11,90 @@ from dixa.model.v1.agent import (
 from dixa.model.v1.team import Team
 
 
-class AgentCreateBody(TypedDict, total=False):
-    additionalEmails: list[str]
-    additionalPhoneNumbers: list[str]
+class _AgentCreateBodyRequired(TypedDict):
+    displayName: str
+    email: str
+
+
+class _AgentCreateBodyOptional(TypedDict, total=False):
+    additionalEmails: List[str]
+    additionalPhoneNumbers: List[str]
     avatarUrl: str
-    displayName: Required[str]
-    email: Required[str]
     firstName: str
     lastName: str
-    middleNames: list[str]
+    middleNames: List[str]
     phoneNumber: str
 
 
-class AgentUpdateBody(TypedDict, total=False):
-    additionalEmails: list[str]
-    additionalPhoneNumbers: list[str]
+class AgentCreateBody(_AgentCreateBodyRequired, _AgentCreateBodyOptional):
+    pass
+
+
+class _AgentUpdateBodyRequired(TypedDict):
+    displayName: str
+
+
+class _AgentUpdateBodyOptional(TypedDict, total=False):
+    additionalEmails: List[str]
+    additionalPhoneNumbers: List[str]
     avatarUrl: str
-    displayName: Required[str]
     firstName: str
     lastName: str
-    middleNames: list[str]
+    middleNames: List[str]
     phoneNumber: str
 
 
-class AgentUpdateBulkBody(TypedDict, total=False):
-    additionalEmails: list[str]
-    additionalPhoneNumbers: list[str]
+class AgentUpdateBody(_AgentUpdateBodyRequired, _AgentUpdateBodyOptional):
+    pass
+
+
+class _AgentUpdateBulkBodyRequired(TypedDict):
+    displayName: str
+    id: str
+
+
+class _AgentUpdateBulkBodyOptional(TypedDict, total=False):
+    additionalEmails: List[str]
+    additionalPhoneNumbers: List[str]
     avatarUrl: str
-    displayName: Required[str]
     firstName: str
-    id: Required[str]
     lastName: str
-    middleNames: list[str]
+    middleNames: List[str]
     phoneNumber: str
+
+
+class AgentUpdateBulkBody(_AgentUpdateBulkBodyRequired, _AgentUpdateBulkBodyOptional):
+    pass
 
 
 class AgentPatchBody(TypedDict, total=False):
-    additionalEmails: list[str]
-    additionalPhoneNumbers: list[str]
+    additionalEmails: List[str]
+    additionalPhoneNumbers: List[str]
     avatarUrl: str
     displayName: str
     firstName: str
     lastName: str
-    middleNames: list[str]
+    middleNames: List[str]
     phoneNumber: str
 
 
-class AgentPatchBulkBody(TypedDict, total=False):
-    additionalEmails: list[str]
-    additionalPhoneNumbers: list[str]
+class _AgentPatchBulkBodyRequired(TypedDict):
+    id: str
+
+
+class _AgentPatchBulkBodyOptional(TypedDict, total=False):
+    additionalEmails: List[str]
+    additionalPhoneNumbers: List[str]
     avatarUrl: str
     displayName: str
     firstName: str
-    id: Required[str]
     lastName: str
-    middleNames: list[str]
+    middleNames: List[str]
     phoneNumber: str
+
+
+class AgentPatchBulkBody(_AgentPatchBulkBodyRequired, _AgentPatchBulkBodyOptional):
+    pass
 
 
 class AgentListQuery(TypedDict, total=False):
@@ -91,7 +119,7 @@ class AgentResource(DixaResource):
             raise DixaAPIError(f"Expected dict, got {type(data).__name__}")
         return Agent(**data)
 
-    def create_bulk(self, body: list[AgentCreateBody]) -> list[AgentBulkActionOutcome]:
+    def create_bulk(self, body: List[AgentCreateBody]) -> List[AgentBulkActionOutcome]:
         """Create agents.
         https://docs.dixa.io/openapi/dixa-api/beta/tag/Agents/#tag/Agents/operation/postAgentsBulk
         """
@@ -130,7 +158,7 @@ class AgentResource(DixaResource):
             raise DixaAPIError(f"Expected dict, got {type(data).__name__}")
         return Agent(**data)
 
-    def update_bulk(self, body: list[AgentUpdateBody]) -> list[AgentBulkActionOutcome]:
+    def update_bulk(self, body: List[AgentUpdateBody]) -> List[AgentBulkActionOutcome]:
         """Update agents.
         https://docs.dixa.io/openapi/dixa-api/beta/tag/Agents/#tag/Agents/operation/putAgentsBulk
         """
@@ -157,7 +185,7 @@ class AgentResource(DixaResource):
         """
         return self.client.delete(f"{self._url}/{agent_id}")
 
-    def list_(self, query: AgentListQuery | None = None) -> list[Agent]:
+    def list_(self, query: Union[AgentListQuery, None] = None) -> List[Agent]:
         """List agents.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Agents/#tag/Agents/operation/getAgents
         """
@@ -172,13 +200,13 @@ class AgentResource(DixaResource):
             raise DixaAPIError(f"Expected dict, got {type(data).__name__}")
         return AgentPresence(**data)
 
-    def list_presence(self) -> list[AgentPresence]:
+    def list_presence(self) -> List[AgentPresence]:
         """List agent presence.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Agents/#tag/Agents/operation/getAgentsPresence
         """
         return self.client.paginate(f"{self._url}/presence")
 
-    def list_teams(self, agent_id: str) -> list[Team]:
+    def list_teams(self, agent_id: str) -> List[Team]:
         """List teams.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Agents/#tag/Agents/operation/getAgentsAgentidTeams
         """
@@ -194,8 +222,8 @@ class AgentResource(DixaResource):
         return Agent(**data)
 
     def patch_bulk(
-        self, body: list[AgentPatchBulkBody]
-    ) -> list[AgentBulkActionOutcome]:
+        self, body: List[AgentPatchBulkBody]
+    ) -> List[AgentBulkActionOutcome]:
         """Patch agents.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Agents/#tag/Agents/operation/patchAgentsBulk
         """

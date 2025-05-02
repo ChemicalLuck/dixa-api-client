@@ -1,4 +1,4 @@
-from typing import Literal, TypedDict
+from typing import List, Literal, TypedDict, Union
 
 from dixa.api import DixaResource, DixaVersion
 from dixa.exceptions import DixaAPIError
@@ -38,8 +38,8 @@ class ContactEndpointResource(DixaResource):
             )
 
     def list(
-        self, query: ContactEndpointListQuery | None = None
-    ) -> list[ContactEndpoint]:
+        self, query: Union[ContactEndpointListQuery, None] = None
+    ) -> List[ContactEndpoint]:
         """List contact endpoints.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Contact-Endpoints/#tag/Contact-Endpoints/operation/getContact-endpoints
         """

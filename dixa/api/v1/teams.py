@@ -1,4 +1,4 @@
-from typing import TypedDict
+from typing import List, TypedDict
 
 from dixa.api import DixaResource, DixaVersion
 from dixa.exceptions import DixaAPIError
@@ -7,11 +7,11 @@ from dixa.model.v1.team import Team1, TeamMember
 
 
 class TeamAddMembersBody(TypedDict):
-    agentIds: list[str]
+    agentIds: List[str]
 
 
 class TeamRemoveMembersBody(TypedDict):
-    agentIds: list[str]
+    agentIds: List[str]
 
 
 class TeamCreateBody(TypedDict):
@@ -56,19 +56,19 @@ class TeamResource(DixaResource):
             raise DixaAPIError(f"Expected dict, got {type(data).__name__}")
         return Team1(**data)
 
-    def list_members(self, team_id: str) -> list[TeamMember]:
+    def list_members(self, team_id: str) -> List[TeamMember]:
         """List members of a team.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Teams/#tag/Teams/operation/getTeamsTeamidAgents
         """
         return self.client.paginate(f"{self._url}/{team_id}/agents")
 
-    def list_presence(self, team_id: str) -> list[AgentPresence]:
+    def list_presence(self, team_id: str) -> List[AgentPresence]:
         """List presence of a team.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Teams/#tag/Teams/operation/getTeamsTeamidPresence
         """
         return self.client.paginate(f"{self._url}/{team_id}/presence")
 
-    def list_(self) -> list[Team1]:
+    def list_(self) -> List[Team1]:
         """List teams.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Teams/#tag/Teams/operation/getTeams
         """

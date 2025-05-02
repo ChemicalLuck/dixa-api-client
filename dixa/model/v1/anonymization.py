@@ -1,6 +1,6 @@
 from typing import Literal, Optional, TypedDict
 
-type AnonymizationRequestType = Literal["Conversation", "Message", "User"]
+AnonymizationRequestType = Literal["Conversation", "Message", "User"]
 
 
 class AnonymizationRequest(TypedDict):

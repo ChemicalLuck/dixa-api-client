@@ -1,4 +1,4 @@
-from typing import Optional, TypedDict
+from typing import List, Optional, TypedDict, Union
 
 from dixa.api import DixaResource, DixaVersion
 from dixa.exceptions import DixaAPIError
@@ -15,17 +15,17 @@ from dixa.model.v1.analytics import (
 
 
 class AnalyticsGetMetricDataBody(TypedDict):
-    aggregations: list[str]
-    filters: Optional[list[Filter]]
+    aggregations: List[str]
+    filters: Optional[List[Filter]]
     id: str
-    periodFilter: Interval | Preset
+    periodFilter: Union[Interval, Preset]
     timezone: str
 
 
 class AnalyticsGetMetricRecordsDataBody(TypedDict):
-    filters: Optional[list[Filter]]
+    filters: Optional[List[Filter]]
     id: str
-    periodFilter: Interval | Preset
+    periodFilter: Union[Interval, Preset]
     timezone: str
 
 
@@ -37,7 +37,7 @@ class AnalyticsResource(DixaResource):
     resource = "analytics"
     dixa_version: DixaVersion = "v1"
 
-    def filter(self, filter_attribute: str) -> list[FilterValue]:
+    def filter(self, filter_attribute: str) -> List[FilterValue]:
         """Filter values.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Analytics/#tag/Analytics/operation/getAnalyticsFilterFilterattribute
         """
@@ -54,7 +54,7 @@ class AnalyticsResource(DixaResource):
 
     def get_metric_records_data(
         self, body: AnalyticsGetMetricRecordsDataBody
-    ) -> list[MetricRecord]:
+    ) -> List[MetricRecord]:
         """Get metric records data.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Analytics/#tag/Analytics/operation/postAnalyticsRecords
         """
@@ -82,15 +82,17 @@ class AnalyticsResource(DixaResource):
         return MetricRecordMetadata(**data)
 
     def get_metric_records_catalogue(
-        self, query: dict | None = None
-    ) -> list[MetricRecordMetadata]:
+        self, query: Union[dict, None] = None
+    ) -> List[MetricRecordMetadata]:
         """Get metric record description.
 
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Analytics/#tag/Analytics/operation/getAnalyticsRecordsRecordid
         """
         return self.client.paginate(f"{self._url}/records", query)
 
-    def get_metrics_catalogue(self, query: dict | None = None) -> list[MetricMetadata]:
+    def get_metrics_catalogue(
+        self, query: Union[dict, None] = None
+    ) -> List[MetricMetadata]:
         """Get metrics catalogue.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Analytics/#tag/Analytics/operation/getAnalyticsMetrics
         """

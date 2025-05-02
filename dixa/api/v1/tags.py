@@ -1,13 +1,20 @@
-from typing import Required, TypedDict
+from typing import List, TypedDict
 
 from dixa.api import DixaResource, DixaVersion
 from dixa.exceptions import DixaAPIError
 from dixa.model.v1.tag import Tag
 
 
-class TagCreateBody(TypedDict, total=False):
+class _TagCreateBodyRequired(TypedDict):
+    name: str
+
+
+class _TagCreateBodyOptional(TypedDict, total=False):
     color: str
-    name: Required[str]
+
+
+class TagCreateBody(_TagCreateBodyRequired, _TagCreateBodyOptional):
+    pass
 
 
 class TagResource(DixaResource):
@@ -48,7 +55,7 @@ class TagResource(DixaResource):
             raise DixaAPIError(f"Expected dict, got {type(data).__name__}")
         return Tag(**data)
 
-    def list_(self) -> list[Tag]:
+    def list_(self) -> List[Tag]:
         """List tags.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Tags/#tag/Tags/operation/getTags
         """

@@ -1,4 +1,4 @@
-from typing import Required, TypedDict
+from typing import TypedDict
 
 
 class Team(TypedDict):
@@ -10,8 +10,15 @@ class Team1(TypedDict):
     name: str
 
 
-class TeamMember(TypedDict, total=False):
+class _TeamMemberRequired(TypedDict):
+    id: str
+
+
+class _TeamMemberOptional(TypedDict, total=False):
     email: str
-    id: Required[str]
     name: str
     phoneNumber: str
+
+
+class TeamMember(_TeamMemberRequired, _TeamMemberOptional):
+    pass

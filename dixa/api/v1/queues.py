@@ -1,4 +1,4 @@
-from typing import Required, TypedDict
+from typing import Dict, List, TypedDict
 
 from dixa.api import DixaResource, DixaVersion
 from dixa.exceptions import DixaAPIError
@@ -14,25 +14,32 @@ from dixa.model.v1.queue import (
 
 
 class QueueAssignBody(TypedDict):
-    agentIds: list[str]
+    agentIds: List[str]
 
 
-class QueueCreateRequest(TypedDict, total=False):
+class _QueueCreateRequestRequired(TypedDict):
+    isDefault: bool
+    isDoNotOfferEnabled: bool
+    name: str
+
+
+class _QueueCreateRequestOptional(TypedDict, total=False):
     callFunctionality: bool
-    doNotOfferTimeouts: dict[Channel, int]
-    isDefault: Required[bool]
-    isDoNotOfferEnabled: Required[bool]
+    doNotOfferTimeouts: Dict["Channel", int]
     isPreferredAgentEnabled: bool
-    name: Required[str]
     offerAbandonedConversations: bool
-    offerAlgorithm: OfferingAlgorithm
+    offerAlgorithm: "OfferingAlgorithm"
     offerTimeout: int
     personalAgentOfflineTimeout: int
     preferredAgentOfflineTimeout: int
-    preferredAgentTimeouts: dict[Channel, int]
+    preferredAgentTimeouts: Dict["Channel", int]
     priority: int
-    queueThresholds: dict[QueueThreshold, int]
+    queueThresholds: Dict["QueueThreshold", int]
     wrapupTimeout: int
+
+
+class QueueCreateRequest(_QueueCreateRequestRequired, _QueueCreateRequestOptional):
+    pass
 
 
 class QueueCreateBody(TypedDict, total=False):
@@ -40,7 +47,7 @@ class QueueCreateBody(TypedDict, total=False):
 
 
 class QueueRemoveBody(TypedDict):
-    agentIds: list[str]
+    agentIds: List[str]
 
 
 class QueueResource(DixaResource):
@@ -51,7 +58,7 @@ class QueueResource(DixaResource):
     resource = "queues"
     dixa_version: DixaVersion = "v1"
 
-    def assign(self, queue_id: str, body: QueueAssignBody) -> list[AssignAgentOutcome]:
+    def assign(self, queue_id: str, body: QueueAssignBody) -> List[AssignAgentOutcome]:
         """Assign agents
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Queues/#tag/Queues/operation/patchQueuesQueueidMembers
         """
@@ -90,13 +97,13 @@ class QueueResource(DixaResource):
             raise DixaAPIError(f"Expected dict, got {type(data).__name__}")
         return Queue1(**data)
 
-    def list_agents(self, queue_id: str) -> list[QueueMember]:
+    def list_agents(self, queue_id: str) -> List[QueueMember]:
         """List agents.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Queues/#tag/Queues/operation/getQueuesQueueidMembers
         """
         return self.client.paginate(f"{self._url}/{queue_id}/members")
 
-    def list_(self) -> list[Queue1]:
+    def list_(self) -> List[Queue1]:
         """List queues.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Queues/#tag/Queues/operation/getQueues
         """

@@ -1,4 +1,4 @@
-from typing import Literal, Required, TypedDict
+from typing import List, Literal, TypedDict, Union
 
 from .bulk_action import BulkActionFailure
 
@@ -7,23 +7,30 @@ class EndUserCustomAttribute(TypedDict):
     id: str
     identifier: str
     name: str
-    value: list[str]
+    value: List[str]
 
 
-class EndUser(TypedDict, total=False):
-    additionalEmails: list[str]
-    additionalPhoneNumbers: list[str]
+class _EndUserRequired(TypedDict):
+    createdAt: str
+    id: str
+
+
+class _EndUserOptional(TypedDict, total=False):
+    additionalEmails: List[str]
+    additionalPhoneNumbers: List[str]
     avatarUrl: str
-    createdAt: Required[str]
-    customAttributes: list[EndUserCustomAttribute]
+    customAttributes: List[EndUserCustomAttribute]
     displayName: str
     email: str
     externalId: str
     firstName: str
-    id: Required[str]
     lastName: str
-    middleNames: list[str]
+    middleNames: List[str]
     phoneNumber: str
+
+
+class EndUser(_EndUserRequired, _EndUserOptional):
+    pass
 
 
 class EndUserPatchBulkActionSuccess(TypedDict):
@@ -31,6 +38,6 @@ class EndUserPatchBulkActionSuccess(TypedDict):
     _type: Literal["BulkActionSuccess"]
 
 
-type EndUserPatchBulkActionOutcome = EndUserPatchBulkActionSuccess | BulkActionFailure
+EndUserPatchBulkActionOutcome = Union[EndUserPatchBulkActionSuccess, BulkActionFailure]
 
 EndUserPatchBulkActionOutcomes = [EndUserPatchBulkActionSuccess, BulkActionFailure]

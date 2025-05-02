@@ -10,7 +10,7 @@ authors = [
 ]
 description = "Python API Client for Dixa"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.8"
 classifiers = [
 	"Development Status :: 3 - Alpha",
 	"Intended Audience :: Information Technology",
@@ -24,9 +24,10 @@ classifiers = [
 dependencies = ["requests"]
 
 [project.optional-dependencies]
-dev = ["ruff", "pre-commit", "python-dotenv"]
+dev = ["ruff", "pre-commit", "python-dotenv", "vermin"]
 
 [project.urls]
 Homepage = "http://github.com/ChemicalLuck/dixa-api"
 
-
+[tool.ruff]
+target-version = "py38"
