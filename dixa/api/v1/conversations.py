@@ -155,7 +155,7 @@ class ConversationListFlowsQuery(TypedDict):
 ConversationPatchCustomAttributesBody = Dict[str, Union[str, List[str]]]
 
 
-class ConversationReopenBody(TypedDict):
+class ConversationReopenBody(TypedDict, total=False):
     userId: str
 
 
