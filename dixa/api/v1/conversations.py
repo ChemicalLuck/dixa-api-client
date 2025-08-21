@@ -192,11 +192,79 @@ class ConversationSearchQueryQueryFilterConditionFieldOperatorIsOneOf(TypedDict)
     _type: Literal["IsOneOf"]
 
 
+class ConversationSearchQueryQueryFilterConditionFieldOperatorExcludesAll(TypedDict):
+    values: List[str]
+    _type: Literal["ExcludesAll"]
+
+
+class ConversationSearchQueryQueryFilterConditionFieldOperatorExcludesOne(TypedDict):
+    values: List[str]
+    _type: Literal["ExcludesOne"]
+
+
+class ConversationSearchQueryQueryFilterConditionFieldOperatorIncludesAll(TypedDict):
+    values: List[str]
+    _type: Literal["IncludesAll"]
+
+
+class ConversationSearchQueryQueryFilterConditionFieldOperatorIncludesOne(TypedDict):
+    values: List[str]
+    _type: Literal["IncludesOne"]
+
+
+class ConversationSearchQueryQueryFilterConditionFieldOperatorBetween(TypedDict):
+    timestampFrom: str
+    timestampTo: str
+    _type: Literal["Between"]
+
+
+class ConversationSearchQueryQueryFilterConditionFieldOperatorSince(TypedDict):
+    timestamp: str
+    _type: Literal["Since"]
+
+
+class ConversationSearchQueryQueryFilterConditionFieldOperatorUntil(TypedDict):
+    timestamp: str
+    _type: Literal["Until"]
+
+
+class ConversationSearchQueryQueryFilterConditionFieldOperatorBetweenDuration(
+    TypedDict
+):
+    max: str
+    min: str
+    _type: Literal["Between"]
+
+
+class ConversationSearchQueryQueryFilterConditionFieldOperatorLongerThanOrEqualTo(
+    TypedDict
+):
+    duration: str
+    _type: Literal["LongerThanOrEqualTo"]
+
+
+class ConversationSearchQueryQueryFilterConditionFieldOperatorShorterThanOrEqualTo(
+    TypedDict
+):
+    duration: str
+    _type: Literal["ShorterThanOrEqualTo"]
+
+
 ConversationSearchQueryQueryFilterConditionFieldOperator = Union[
     ConversationSearchQueryQueryFilterConditionFieldOperatorIsEmpty,
     ConversationSearchQueryQueryFilterConditionFieldOperatorIsNotEmpty,
     ConversationSearchQueryQueryFilterConditionFieldOperatorIsNotOneOf,
     ConversationSearchQueryQueryFilterConditionFieldOperatorIsOneOf,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorExcludesAll,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorExcludesOne,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorIncludesAll,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorIncludesOne,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorSince,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorBetween,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorUntil,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorBetweenDuration,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorShorterThanOrEqualTo,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorLongerThanOrEqualTo,
 ]
 
 
