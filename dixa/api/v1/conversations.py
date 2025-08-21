@@ -236,7 +236,7 @@ class ConversationSearchQueryQuery(TypedDict):
 
 
 class ConversationSearchQuery(TypedDict):
-    filters: List[ConversationSearchQueryFilter]
+    filters: ConversationSearchQueryFilter
     query: ConversationSearchQueryQuery
 
 
