@@ -524,7 +524,7 @@ class ConversationResource(DixaResource):
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getSearchConversations
         """
         data = self.client.post(
-            f"{self.base_url}/{self.dixa_version}/search/{self.resource}", body
+            f"{self.base_url}/{self.dixa_version}/search/{self.resource}", body, list
         )
         if not isinstance(data, list):
             raise DixaAPIError(f"Expected list, got {type(data).__name__}")
