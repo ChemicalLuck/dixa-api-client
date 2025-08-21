@@ -16,7 +16,7 @@ from dixa.model.v1.conversation import (
     ConversationTypes,
 )
 from dixa.model.v1.internal_note import InternalNote
-from dixa.model.v1.message import Content, Direction, File, Message
+from dixa.model.v1.message import Direction, File, Message
 from dixa.model.v1.tag import Tag
 
 
@@ -35,8 +35,23 @@ class ConversationAddInternalNoteBody(
     pass
 
 
+class ConversationAddMessageBodyContentText(TypedDict):
+    value: str
+    _type: Literal["Text"]
+
+
+class ConversationAddMessageBodyContentHtml(TypedDict):
+    value: str
+    _type: Literal["Html"]
+
+
+ConversationAddMessageBodyContent = Union[
+    ConversationAddMessageBodyContentText, ConversationAddMessageBodyContentHtml
+]
+
+
 class _ConversationAddMessageInboundBodyRequired(TypedDict):
-    content: "Content"  # Required field
+    content: ConversationAddMessageBodyContent
 
 
 class _ConversationAddMessageInboundBodyOptional(TypedDict, total=False):
@@ -55,7 +70,7 @@ class ConversationAddMessageInboundBody(
 
 class _ConversationAddMessageOutboundBodyRequired(TypedDict):
     agentId: str
-    content: "Content"
+    content: ConversationAddMessageBodyContent
 
 
 class _ConversationAddMessageOutboundBodyOptional(TypedDict, total=False):
@@ -159,9 +174,70 @@ class ConversationReopenBody(TypedDict, total=False):
     userId: str
 
 
-class ConversationSearchQuery(TypedDict):
+class ConversationSearchQueryQueryFilterConditionFieldOperatorIsEmpty(TypedDict):
+    _type: Literal["IsEmpty"]
+
+
+class ConversationSearchQueryQueryFilterConditionFieldOperatorIsNotEmpty(TypedDict):
+    _type: Literal["IsNotEmpty"]
+
+
+class ConversationSearchQueryQueryFilterConditionFieldOperatorIsNotOneOf(TypedDict):
+    values: List[str]
+    _type: Literal["IsNotOneOf"]
+
+
+class ConversationSearchQueryQueryFilterConditionFieldOperatorIsOneOf(TypedDict):
+    values: List[str]
+    _type: Literal["IsOneOf"]
+
+
+ConversationSearchQueryQueryFilterConditionFieldOperator = Union[
+    ConversationSearchQueryQueryFilterConditionFieldOperatorIsEmpty,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorIsNotEmpty,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorIsNotOneOf,
+    ConversationSearchQueryQueryFilterConditionFieldOperatorIsOneOf,
+]
+
+
+class ConversationSearchQueryQueryFilterConditionField(TypedDict):
+    operator: ConversationSearchQueryQueryFilterConditionFieldOperator
+    _type: Literal[
+        "AgentId",
+        "AssignedDate",
+        "Channel",
+        "ClosedDate",
+        "ContactId",
+        "ConversationId",
+        "CreationDate",
+        "CustomAttribute",
+        "Direction",
+        "Duration",
+        "LastActivity",
+        "LastMessage",
+        "QueueId",
+        "Status",
+        "TagId",
+    ]
+
+
+class ConversationSearchQueryFilterCondition(TypedDict):
+    field: ConversationSearchQueryQueryFilterConditionField
+
+
+class ConversationSearchQueryFilter(TypedDict):
+    conditions: List[ConversationSearchQueryFilterCondition]
+    strategy: Literal["All", "Any"]
+
+
+class ConversationSearchQueryQuery(TypedDict):
     exactMatch: Optional[bool]
     query: str
+
+
+class ConversationSearchQuery(TypedDict):
+    filters: List[ConversationSearchQueryFilter]
+    query: ConversationSearchQueryQuery
 
 
 class _ConversationTransferBodyRequired(TypedDict):
@@ -379,7 +455,7 @@ class ConversationResource(DixaResource):
         """Search conversations.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getSearchConversations
         """
-        return self.client.paginate(f"{self._url}/search", query)
+        return self.client.paginate(f"{self.base_url}/search/{self.resource}", query)
 
     def tag(self, conversation_id: str, tag_id: str):
         """Tag a conversation.
