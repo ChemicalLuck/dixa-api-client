@@ -300,7 +300,7 @@ class ConversationSearchQueryFilter(TypedDict):
 
 class ConversationSearchQueryQuery(TypedDict):
     exactMatch: Optional[bool]
-    query: str
+    value: str
 
 
 class ConversationSearchBody(TypedDict):
