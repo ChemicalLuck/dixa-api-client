@@ -523,7 +523,12 @@ class ConversationResource(DixaResource):
         """Search conversations.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getSearchConversations
         """
-        return self.client.post(f"{self.base_url}/search/{self.resource}", body)
+        data = self.client.post(
+            f"{self.base_url}/{self.dixa_version}/search/{self.resource}", body
+        )
+        if not isinstance(data, list):
+            raise DixaAPIError(f"Expected list, got {type(data).__name__}")
+        return [ConversationSearchHit(**item) for item in data]
 
     def tag(self, conversation_id: str, tag_id: str):
         """Tag a conversation.
