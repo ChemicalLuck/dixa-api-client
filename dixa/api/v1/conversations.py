@@ -303,7 +303,7 @@ class ConversationSearchQueryQuery(TypedDict):
     query: str
 
 
-class ConversationSearchQuery(TypedDict):
+class ConversationSearchBody(TypedDict):
     filters: ConversationSearchQueryFilter
     query: ConversationSearchQueryQuery
 
@@ -519,11 +519,11 @@ class ConversationResource(DixaResource):
         """
         return self.client.put(f"{self._url}/{conversation_id}/reopen", body)
 
-    def search(self, query: ConversationSearchQuery) -> List[ConversationSearchHit]:
+    def search(self, body: ConversationSearchBody) -> List[ConversationSearchHit]:
         """Search conversations.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/getSearchConversations
         """
-        return self.client.paginate(f"{self.base_url}/search/{self.resource}", query)
+        return self.client.post(f"{self.base_url}/search/{self.resource}", body)
 
     def tag(self, conversation_id: str, tag_id: str):
         """Tag a conversation.
