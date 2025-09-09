@@ -546,4 +546,4 @@ class ConversationResource(DixaResource):
         """Transfer a conversation.
         https://docs.dixa.io/openapi/dixa-api/v1/tag/Conversations/#tag/Conversations/operation/putConversationsConversationidTransferQueue
         """
-        return self.client.post(f"{self._url}/{conversation_id}/transfer/queue", body)
+        return self.client.put(f"{self._url}/{conversation_id}/transfer/queue", body)
