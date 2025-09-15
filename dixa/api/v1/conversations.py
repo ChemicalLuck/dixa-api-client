@@ -16,7 +16,7 @@ from dixa.model.v1.conversation import (
     ConversationTypes,
 )
 from dixa.model.v1.internal_note import InternalNote
-from dixa.model.v1.message import Direction, File, Message
+from dixa.model.v1.message import Attachment, Direction, Message
 from dixa.model.v1.tag import Tag
 
 
@@ -55,7 +55,7 @@ class _ConversationAddMessageInboundBodyRequired(TypedDict):
 
 
 class _ConversationAddMessageInboundBodyOptional(TypedDict, total=False):
-    attachments: List["File"]
+    attachments: List[Attachment]
     externalId: str
     integrationEmail: str
     _type: Literal["Inbound"]
@@ -74,7 +74,7 @@ class _ConversationAddMessageOutboundBodyRequired(TypedDict):
 
 
 class _ConversationAddMessageOutboundBodyOptional(TypedDict, total=False):
-    attachments: List["File"]
+    attachments: List[Attachment]
     bcc: List[str]
     cc: List[str]
     externalId: str

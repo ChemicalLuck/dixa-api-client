@@ -1,9 +1,16 @@
 from typing import List, Literal, Optional, TypedDict, Union
 
 
-class Attachment(TypedDict):
+class _AttachmentOptional(TypedDict, total=False):
     prettyName: str
+
+
+class _AttachmentRequired(TypedDict, total=False):
     url: str
+
+
+class Attachment(_AttachmentOptional, _AttachmentRequired):
+    pass
 
 
 Direction = Literal["Inbound", "Outbound"]
