@@ -303,7 +303,7 @@ class ConversationSearchQueryQuery(TypedDict):
     value: str
 
 
-class ConversationSearchBody(TypedDict):
+class ConversationSearchBody(TypedDict, total=False):
     filters: ConversationSearchQueryFilter
     query: ConversationSearchQueryQuery
 
