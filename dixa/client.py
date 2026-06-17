@@ -256,13 +256,18 @@ class DixaClient:
                 return data
             try:
                 response = response.json()
-                data.extend(response.get("data", []))
             except JSONDecodeError:
                 self._logger.error(
                     "Failed to decode JSON response, expect missing data",
                     extra={"response": response.text},
                 )
                 break
+            if isinstance(response, list):
+                # Some endpoints (e.g. agents/presence) return a bare list
+                # without the usual {"data": ..., "meta": ...} envelope.
+                data.extend(response)
+                break
+            data.extend(response.get("data", []))
             meta = response.get("meta", {})
             url = meta.get("next") if meta is not None else ""
         self._logger.debug(
