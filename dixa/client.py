@@ -206,6 +206,11 @@ class DixaClient:
     def _extract_data(
         self, response: Response, expected: Type[Union[dict, list]]
     ) -> Union[dict, list]:
+        if response.status_code == 204 or not response.content:
+            # No-content responses (e.g. tag/untag/reopen/close/claim/transfer
+            # return 204) carry no body to decode.
+            return expected()
+
         try:
             data = response.json().get("data", {})
         except JSONDecodeError:
