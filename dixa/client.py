@@ -188,6 +188,9 @@ class DixaClient:
             self._logger.error(
                 "HTTP error",
                 extra={
+                    "method": redacted_request.method,
+                    "url": redacted_request.url,
+                    "status_code": http_error.response.status_code,
                     "error": http_error.response.text,
                 },
             )
